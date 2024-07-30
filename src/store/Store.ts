@@ -1,6 +1,6 @@
 import { JsonUtil, JsonValue } from "@common-module/ts";
 
-export class Store {
+export default class Store {
   private readonly prefix: string;
 
   constructor(name: string) {
@@ -33,7 +33,9 @@ export class Store {
     } catch (e) {
       if (Store.isQuotaExceededError(e)) {
         storage.clear();
-        storage.setItem(fullKey, JSON.stringify(value));
+
+        // after clearing the storage, the page should be reloaded
+        location.reload();
       } else {
         throw e;
       }
@@ -42,10 +44,17 @@ export class Store {
 
   public get<T extends JsonValue>(key: string): T | undefined {
     const fullKey = this.getFullKey(key);
-    const value = sessionStorage.getItem(fullKey) ||
+    const value = sessionStorage.getItem(fullKey) ??
       localStorage.getItem(fullKey);
 
-    return value === null ? undefined : JsonUtil.parseWithUndefined<T>(value);
+    if (value === null) return undefined;
+
+    try {
+      return JsonUtil.parseWithUndefined<T>(value);
+    } catch (e) {
+      console.error(`Failed to parse ${fullKey}: ${value}`);
+      console.error(e);
+    }
   }
 
   public getAll<T extends JsonValue>(): Record<string, T> {
@@ -58,7 +67,13 @@ export class Store {
           const value = storage.getItem(key);
           if (value !== null) {
             const parsedKey = key.slice(this.prefix.length);
-            result[parsedKey] = JsonUtil.parseWithUndefined<T>(value);
+
+            try {
+              result[parsedKey] = JsonUtil.parseWithUndefined<T>(value);
+            } catch (e) {
+              console.error(`Failed to parse ${key}: ${value}`);
+              console.error(e);
+            }
           }
         }
       }
@@ -93,5 +108,3 @@ export class Store {
     });
   }
 }
-
-export default Store;

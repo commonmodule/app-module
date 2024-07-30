@@ -1,5 +1,5 @@
 import { JsonValue } from "@common-module/ts";
-export declare class Store {
+export default class Store {
     private readonly prefix;
     constructor(name: string);
     private getStorage;
@@ -12,5 +12,4 @@ export declare class Store {
     delete(...keys: string[]): void;
     clear(): void;
 }
-export default Store;
 //# sourceMappingURL=Store.d.ts.map
