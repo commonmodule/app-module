@@ -31,12 +31,22 @@ export default class DomNode<HE extends HTMLElement = HTMLElement> {
     //TODO:
   }
 
-  public style(styles: Partial<CSSStyleDeclaration>): this {
-    Object.assign(this.htmlElement.style, styles);
+  public appendTo(parent: DomNode, index?: number): this {
+    if (index === undefined || index >= parent.htmlElement.childNodes.length) {
+      parent.htmlElement.appendChild(this.htmlElement);
+    } else {
+      const referenceNode = parent.htmlElement.childNodes[index];
+      parent.htmlElement.insertBefore(this.htmlElement, referenceNode);
+    }
     return this;
   }
 
   public delete() {
     //TODO:
+  }
+
+  public style(styles: Partial<CSSStyleDeclaration>): this {
+    Object.assign(this.htmlElement.style, styles);
+    return this;
   }
 }

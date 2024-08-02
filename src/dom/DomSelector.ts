@@ -1,7 +1,6 @@
-export type DomSelectorKey = keyof HTMLElementTagNameMap;
+export type DomSelectorKey = "" | keyof HTMLElementTagNameMap;
 
 type DomSelector =
-  | ""
   | DomSelectorKey
   | `${DomSelectorKey}#${string}`
   | `${DomSelectorKey}.${string}`

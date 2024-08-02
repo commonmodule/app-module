@@ -1,12 +1,11 @@
 import DomSelector from "./DomSelector.js";
-export type DomChild = DomNode;
-export default class DomNode<HE extends HTMLElement = HTMLElement> {
+export type DomChild = DomNode<HTMLElement>;
+export default class DomNode<HE extends HTMLElement> {
     private htmlElement;
     constructor(htmlElement?: HE | DomSelector, ...children: DomChild[]);
     private appendText;
     private append;
-    appendTo(parent: DomNode, index?: number): this;
-    delete(): void;
     style(styles: Partial<CSSStyleDeclaration>): this;
+    delete(): void;
 }
-//# sourceMappingURL=DomNode.d.ts.map
+//# sourceMappingURL=%C3%98%C3%8F.d.ts.map
