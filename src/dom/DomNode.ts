@@ -1,7 +1,7 @@
 import DomSelector from "./DomSelector.js";
 import DomUtil from "./DomUtil.js";
 
-export type DomChild = DomNode;
+export type DomChild = DomNode | string;
 
 export default class DomNode<HE extends HTMLElement = HTMLElement> {
   private htmlElement: HE;
@@ -27,8 +27,16 @@ export default class DomNode<HE extends HTMLElement = HTMLElement> {
     return this;
   }
 
-  private append(...children: DomChild[]) {
-    //TODO:
+  public append(...children: DomChild[]) {
+    for (const child of children) {
+      if (child instanceof DomNode) {
+        child.appendTo(this);
+      } else if (typeof child === "string") {
+        this.appendText(child);
+      } else { // attributes
+        //TODO:
+      }
+    }
   }
 
   public appendTo(parent: DomNode, index?: number): this {
@@ -43,6 +51,20 @@ export default class DomNode<HE extends HTMLElement = HTMLElement> {
 
   public delete() {
     //TODO:
+  }
+
+  public empty(): this {
+    this.htmlElement.innerHTML = "";
+    return this;
+  }
+
+  public set text(text: string | undefined) {
+    this.empty();
+    if (text) this.appendText(text);
+  }
+
+  public get text(): string {
+    return this.htmlElement.textContent ?? "";
   }
 
   public style(styles: Partial<CSSStyleDeclaration>): this {
