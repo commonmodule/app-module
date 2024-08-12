@@ -2,16 +2,18 @@ import DomSelector, { DomSelectorKey } from "./DomSelector.js";
 
 class DomUtil {
   public createHtmlElement<HE extends HTMLElement>(selector: DomSelector): HE {
-    const [tagName, rest] = (selector || "div").split(/[#.]/, 2) as [
-      DomSelectorKey,
-      string | undefined,
-    ];
-    const element = document.createElement(tagName || "div") as HE;
-    if (rest) {
-      const [id, ...classes] = rest.split(".");
-      if (id && !id.includes("#")) element.id = id;
-      if (classes.length > 0) element.className = classes.join(" ");
+    const parts = (selector || "div").split(/([#.])/);
+    const tagName = parts[0] || "div";
+    const element = document.createElement(tagName) as HE;
+
+    let currentType: "#" | "." | "" = "";
+    for (let i = 1; i < parts.length; i += 2) {
+      currentType = parts[i] as "#" | ".";
+      const value = parts[i + 1];
+      if (currentType === "#") element.id = value;
+      else if (currentType === ".") element.classList.add(value);
     }
+
     return element;
   }
 }

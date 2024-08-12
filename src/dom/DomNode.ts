@@ -2,7 +2,11 @@ import { EventContainer } from "@common-module/ts";
 import DomSelector from "./DomSelector.js";
 import DomUtil from "./DomUtil.js";
 
-export type DomChild = DomNode | string;
+interface DomNodeOptions {
+  deleteDelay?: number;
+}
+
+export type DomChild = DomNode | DomNodeOptions | string;
 
 export default class DomNode<
   HE extends HTMLElement = HTMLElement,
@@ -10,6 +14,7 @@ export default class DomNode<
 > extends EventContainer<ET & { visible: () => void }> {
   private parent: DomNode | undefined;
   private children: DomNode[] = [];
+  private deleteDelay: number | undefined;
 
   protected htmlElement: HE;
 
@@ -41,8 +46,10 @@ export default class DomNode<
         child.appendTo(this);
       } else if (typeof child === "string") {
         this.appendText(child);
-      } else { // attributes
-        //TODO:
+      } else {
+        if (child.deleteDelay !== undefined) {
+          this.deleteDelay = child.deleteDelay;
+        }
       }
     }
   }
@@ -79,7 +86,8 @@ export default class DomNode<
   }
 
   public delete() {
-    //TODO:
+    if (this.deleteDelay === undefined) this.htmlElement.remove();
+    else setTimeout(() => this.htmlElement.remove(), this.deleteDelay);
   }
 
   public empty(): this {
@@ -99,5 +107,18 @@ export default class DomNode<
   public style(styles: Partial<CSSStyleDeclaration>): this {
     Object.assign(this.htmlElement.style, styles);
     return this;
+  }
+
+  public onDom<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: HE, event: HTMLElementEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
+  ): this {
+    this.htmlElement.addEventListener(type, listener as EventListener, options);
+    return this;
+  }
+
+  public calculateRect(): DOMRect {
+    return this.htmlElement.getBoundingClientRect();
   }
 }
