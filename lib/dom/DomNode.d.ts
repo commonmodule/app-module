@@ -1,7 +1,8 @@
 import { EventContainer } from "@common-module/ts";
 import DomSelector from "./DomSelector.js";
 interface DomNodeOptions {
-    deleteDelay?: number;
+    removalDelay?: number;
+    removalClassName?: string;
 }
 export type DomChild = DomNode | DomNodeOptions | string;
 export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Record<string, (...args: any[]) => any> = {}> extends EventContainer<ET & {
@@ -9,7 +10,8 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
 }> {
     private parent;
     private children;
-    private deleteDelay;
+    private removalDelay;
+    private removalClassName;
     protected htmlElement: HE;
     constructor(htmlElement?: HE | DomSelector, ...children: DomChild[]);
     private appendText;
@@ -17,7 +19,7 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     private isVisible;
     private notifyVisibility;
     appendTo(parent: DomNode, index?: number): this;
-    delete(): void;
+    remove(): void;
     empty(): this;
     set text(text: string | undefined);
     get text(): string;

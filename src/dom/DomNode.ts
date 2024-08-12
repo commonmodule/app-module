@@ -3,7 +3,8 @@ import DomSelector from "./DomSelector.js";
 import DomUtil from "./DomUtil.js";
 
 interface DomNodeOptions {
-  deleteDelay?: number;
+  removalDelay?: number;
+  removalClassName?: string;
 }
 
 export type DomChild = DomNode | DomNodeOptions | string;
@@ -14,7 +15,8 @@ export default class DomNode<
 > extends EventContainer<ET & { visible: () => void }> {
   private parent: DomNode | undefined;
   private children: DomNode[] = [];
-  private deleteDelay: number | undefined;
+  private removalDelay: number | undefined;
+  private removalClassName: string | undefined;
 
   protected htmlElement: HE;
 
@@ -47,8 +49,11 @@ export default class DomNode<
       } else if (typeof child === "string") {
         this.appendText(child);
       } else {
-        if (child.deleteDelay !== undefined) {
-          this.deleteDelay = child.deleteDelay;
+        if (child.removalDelay !== undefined) {
+          this.removalDelay = child.removalDelay;
+        }
+        if (child.removalClassName !== undefined) {
+          this.removalClassName = child.removalClassName;
         }
       }
     }
@@ -85,9 +90,18 @@ export default class DomNode<
     return this;
   }
 
-  public delete() {
-    if (this.deleteDelay === undefined) this.htmlElement.remove();
-    else setTimeout(() => this.htmlElement.remove(), this.deleteDelay);
+  public remove() {
+    if (this.removalClassName) {
+      this.htmlElement.classList.add(this.removalClassName);
+    }
+
+    if (this.removalDelay === undefined) {
+      this.htmlElement.remove();
+    } else {
+      setTimeout(() => {
+        this.htmlElement.remove();
+      }, this.removalDelay);
+    }
   }
 
   public empty(): this {
