@@ -75,6 +75,7 @@ export default class DomNode<
 
   private removalDelay: number | undefined;
   private removalClassName: string | undefined;
+  private removed = false;
 
   constructor(
     elementOrSelector: HE | Selector,
@@ -155,6 +156,9 @@ export default class DomNode<
   }
 
   public remove() {
+    if (this.removed) return;
+    this.removed = true;
+
     this.emit(
       "remove",
       ...([] as Parameters<(ET & { remove: () => void })["remove"]>),
