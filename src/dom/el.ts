@@ -1,9 +1,14 @@
-import DomNode, { DomChild } from "./DomNode.js";
-import DomSelector from "./DomSelector.js";
+import DomNode, {
+  DomChild,
+  ElementOrSelector,
+  InferElementType,
+} from "./DomNode.js";
 
-export default function el<HE extends HTMLElement>(
-  htmlElement?: HE | DomSelector,
-  ...children: DomChild<HE>[]
-): DomNode<HE> {
-  return new DomNode<HE>(htmlElement, ...children);
+export default function el<EOS extends ElementOrSelector = HTMLElement>(
+  elementOrSelector: EOS,
+  ...children: DomChild<EOS>[]
+): DomNode<InferElementType<EOS>> {
+  return new DomNode(elementOrSelector, ...children) as DomNode<
+    InferElementType<EOS>
+  >;
 }

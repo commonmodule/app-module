@@ -1,84 +1,121 @@
 import { EventContainer } from "@common-module/ts";
-import DomSelector from "./DomSelector.js";
-import DomUtil from "./DomUtil.js";
 
-type InferElementType<T extends DomSelector> = T extends "" ? HTMLDivElement
-  : T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T]
-  : T extends `${infer Tag}#${string}`
-    ? Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag]
-    : HTMLElement
-  : T extends `${infer Tag}.${string}`
-    ? Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag]
-    : HTMLElement
-  : HTMLElement;
+type Tag = "" | keyof HTMLElementTagNameMap;
 
-class Test<T extends DomSelector> {
-  public element: InferElementType<T>;
+type Selector =
+  | Tag
+  | `${Tag}#${string}`
+  | `${Tag}.${string}`
+  | `${Tag}#${string}.${string}`;
 
-  constructor(selector: T, attributes?: Partial<InferElementType<T>>) {
-    this.element = DomUtil.createHtmlElement(selector);
-  }
-}
+export type ElementOrSelector = HTMLElement | Selector;
 
-new Test("", { src: "test" });
+type InferElementTypeByTag<TT extends Tag | string> = TT extends ""
+  ? HTMLDivElement
+  : (
+    TT extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TT]
+      : HTMLElement
+  );
 
-type DomNodeOptions<HE extends HTMLElement> = Partial<HE> & {
-  removalDelay?: number;
-  removalClassName?: string;
-};
+export type InferElementType<EOS extends ElementOrSelector> = EOS extends
+  HTMLElement ? EOS
+  : (
+    EOS extends "" ? HTMLDivElement
+      : (
+        EOS extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[EOS]
+          : (
+            EOS extends `${infer TT}#${string}` ? InferElementTypeByTag<TT>
+              : (
+                EOS extends `${infer TT}.${string}` ? InferElementTypeByTag<TT>
+                  : HTMLElement
+              )
+          )
+      )
+  );
 
-export type DomChild<HE extends HTMLElement> =
+type DomNodeOptions<EOS extends ElementOrSelector> =
+  & Partial<InferElementType<EOS>>
+  & {
+    removalDelay?: number;
+    removalClassName?: string;
+  };
+
+export type DomChild<EOS extends ElementOrSelector> =
   | DomNode
-  | DomNodeOptions<HE>
-  | string;
+  | DomNodeOptions<EOS>
+  | string
+  | undefined;
+
+function createElementBySelector<S extends Selector>(
+  selector: S,
+): InferElementType<S> {
+  const parts = (selector || "div").split(/([#.])/);
+  const tagName = parts[0] || "div";
+  const element = document.createElement(tagName) as InferElementType<S>;
+
+  let currentType: "#" | "." | "" = "";
+  for (let i = 1; i < parts.length; i += 2) {
+    currentType = parts[i] as "#" | ".";
+    const value = parts[i + 1];
+    if (currentType === "#") element.id = value;
+    else if (currentType === ".") element.classList.add(value);
+  }
+
+  return element;
+}
 
 export default class DomNode<
   HE extends HTMLElement = HTMLElement,
   ET extends Record<string, (...args: any[]) => any> = {},
-> extends EventContainer<ET & { visible: () => void }> {
+> extends EventContainer<ET & { visible: () => void; remove: () => void }> {
   private parent: DomNode | undefined;
   private children: DomNode[] = [];
+
+  public element: HE;
+
   private removalDelay: number | undefined;
   private removalClassName: string | undefined;
 
-  protected htmlElement: HE;
-
-  constructor(htmlElement?: HE | DomSelector, ...children: DomChild<HE>[]) {
+  constructor(
+    elementOrSelector: HE | Selector,
+    ...children: DomChild<HE>[]
+  ) {
     super();
-    this.htmlElement = htmlElement instanceof HTMLElement
-      ? htmlElement
-      : DomUtil.createHtmlElement<HE>(htmlElement ?? "");
+
+    this.element = elementOrSelector instanceof HTMLElement
+      ? elementOrSelector
+      : createElementBySelector(elementOrSelector) as HE;
+
     this.append(...children);
   }
 
   private appendText(text: string): this {
-    if (this.htmlElement instanceof HTMLTextAreaElement) {
-      this.htmlElement.value += text;
+    if (this.element instanceof HTMLTextAreaElement) {
+      this.element.value += text;
     } else {
       const fragment = document.createDocumentFragment();
       text.split("\n").forEach((line, index) => {
         if (index > 0) fragment.appendChild(document.createElement("br"));
         fragment.appendChild(document.createTextNode(line));
       });
-      this.htmlElement.appendChild(fragment);
+      this.element.appendChild(fragment);
     }
     return this;
   }
 
   public append(...children: DomChild<HE>[]) {
     for (const child of children) {
-      if (child instanceof DomNode) {
-        child.appendTo(this);
-      } else if (typeof child === "string") {
-        this.appendText(child);
-      } else {
+      if (child === undefined) continue;
+      else if (child instanceof DomNode) child.appendTo(this);
+      else if (typeof child === "string") this.appendText(child);
+      else {
         if (child.removalDelay !== undefined) {
           this.removalDelay = child.removalDelay;
         }
         if (child.removalClassName !== undefined) {
           this.removalClassName = child.removalClassName;
         }
-        Object.assign(this.htmlElement, child);
+        Object.assign(this.element, child);
       }
     }
   }
@@ -86,7 +123,7 @@ export default class DomNode<
   private isVisible(): boolean {
     let currentNode: DomNode | undefined = this;
     while (currentNode !== undefined) {
-      if (currentNode.htmlElement === document.body) {
+      if (currentNode.element === document.body) {
         return true;
       }
       currentNode = currentNode.parent;
@@ -99,37 +136,43 @@ export default class DomNode<
       "visible",
       ...([] as Parameters<(ET & { visible: () => void })["visible"]>),
     );
+
     this.children.forEach((child) => child.notifyVisibility());
   }
 
   public appendTo(parent: DomNode, index?: number): this {
-    if (index === undefined || index >= parent.htmlElement.childNodes.length) {
-      parent.htmlElement.appendChild(this.htmlElement);
+    if (index === undefined || index >= parent.element.childNodes.length) {
+      parent.element.appendChild(this.element);
     } else {
-      const referenceNode = parent.htmlElement.childNodes[index];
-      parent.htmlElement.insertBefore(this.htmlElement, referenceNode);
+      const referenceNode = parent.element.childNodes[index];
+      parent.element.insertBefore(this.element, referenceNode);
     }
     this.parent = parent;
+
     if (this.isVisible()) this.notifyVisibility();
+
     return this;
   }
 
   public remove() {
+    this.emit(
+      "remove",
+      ...([] as Parameters<(ET & { remove: () => void })["remove"]>),
+    );
+
     if (this.removalClassName) {
-      this.htmlElement.classList.add(this.removalClassName);
+      this.element.classList.add(this.removalClassName);
     }
 
     if (this.removalDelay === undefined) {
-      this.htmlElement.remove();
+      this.element.remove();
     } else {
-      setTimeout(() => {
-        this.htmlElement.remove();
-      }, this.removalDelay);
+      setTimeout(() => this.element.remove(), this.removalDelay);
     }
   }
 
   public empty(): this {
-    this.htmlElement.innerHTML = "";
+    this.element.innerHTML = "";
     return this;
   }
 
@@ -139,11 +182,11 @@ export default class DomNode<
   }
 
   public get text(): string {
-    return this.htmlElement.textContent ?? "";
+    return this.element.textContent ?? "";
   }
 
   public style(styles: Partial<CSSStyleDeclaration>): this {
-    Object.assign(this.htmlElement.style, styles);
+    Object.assign(this.element.style, styles);
     return this;
   }
 
@@ -152,11 +195,11 @@ export default class DomNode<
     listener: (this: HE, event: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions,
   ): this {
-    this.htmlElement.addEventListener(type, listener as EventListener, options);
+    this.element.addEventListener(type, listener as EventListener, options);
     return this;
   }
 
   public calculateRect(): DOMRect {
-    return this.htmlElement.getBoundingClientRect();
+    return this.element.getBoundingClientRect();
   }
 }

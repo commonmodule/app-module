@@ -1,4 +1,3 @@
-import DomNode, { DomChild } from "./DomNode.js";
-import DomSelector from "./DomSelector.js";
-export default function el<HE extends HTMLElement>(htmlElement?: HE | DomSelector, ...children: DomChild<HE>[]): DomNode<HE>;
+import DomNode, { DomChild, ElementOrSelector, InferElementType } from "./DomNode.js";
+export default function el<EOS extends ElementOrSelector = HTMLElement>(elementOrSelector: EOS, ...children: DomChild<EOS>[]): DomNode<InferElementType<EOS>>;
 //# sourceMappingURL=el.d.ts.map
