@@ -1,4 +1,4 @@
-import DomSelector, { DomSelectorKey } from "./DomSelector.js";
+import DomSelector from "./DomSelector.js";
 
 class DomUtil {
   public createHtmlElement<HE extends HTMLElement>(selector: DomSelector): HE {

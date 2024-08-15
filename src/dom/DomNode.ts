@@ -2,12 +2,35 @@ import { EventContainer } from "@common-module/ts";
 import DomSelector from "./DomSelector.js";
 import DomUtil from "./DomUtil.js";
 
-interface DomNodeOptions {
-  removalDelay?: number;
-  removalClassName?: string;
+type InferElementType<T extends DomSelector> = T extends "" ? HTMLDivElement
+  : T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T]
+  : T extends `${infer Tag}#${string}`
+    ? Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag]
+    : HTMLElement
+  : T extends `${infer Tag}.${string}`
+    ? Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag]
+    : HTMLElement
+  : HTMLElement;
+
+class Test<T extends DomSelector> {
+  public element: InferElementType<T>;
+
+  constructor(selector: T, attributes?: Partial<InferElementType<T>>) {
+    this.element = DomUtil.createHtmlElement(selector);
+  }
 }
 
-export type DomChild = DomNode | DomNodeOptions | string;
+new Test("", { src: "test" });
+
+type DomNodeOptions<HE extends HTMLElement> = Partial<HE> & {
+  removalDelay?: number;
+  removalClassName?: string;
+};
+
+export type DomChild<HE extends HTMLElement> =
+  | DomNode
+  | DomNodeOptions<HE>
+  | string;
 
 export default class DomNode<
   HE extends HTMLElement = HTMLElement,
@@ -20,7 +43,7 @@ export default class DomNode<
 
   protected htmlElement: HE;
 
-  constructor(htmlElement?: HE | DomSelector, ...children: DomChild[]) {
+  constructor(htmlElement?: HE | DomSelector, ...children: DomChild<HE>[]) {
     super();
     this.htmlElement = htmlElement instanceof HTMLElement
       ? htmlElement
@@ -42,7 +65,7 @@ export default class DomNode<
     return this;
   }
 
-  public append(...children: DomChild[]) {
+  public append(...children: DomChild<HE>[]) {
     for (const child of children) {
       if (child instanceof DomNode) {
         child.appendTo(this);
@@ -55,6 +78,7 @@ export default class DomNode<
         if (child.removalClassName !== undefined) {
           this.removalClassName = child.removalClassName;
         }
+        Object.assign(this.htmlElement, child);
       }
     }
   }

@@ -10,7 +10,7 @@ export default abstract class View {
 
   public changeParams(params: ViewParams): void {}
   public close(): void {
-    this.container?.delete();
+    this.container?.remove();
     this.closed = true;
   }
 }

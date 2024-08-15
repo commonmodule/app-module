@@ -1,10 +1,10 @@
 import { EventContainer } from "@common-module/ts";
 import DomSelector from "./DomSelector.js";
-interface DomNodeOptions {
+type DomNodeOptions<HE extends HTMLElement> = Partial<HE> & {
     removalDelay?: number;
     removalClassName?: string;
-}
-export type DomChild = DomNode | DomNodeOptions | string;
+};
+export type DomChild<HE extends HTMLElement> = DomNode | DomNodeOptions<HE> | string;
 export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Record<string, (...args: any[]) => any> = {}> extends EventContainer<ET & {
     visible: () => void;
 }> {
@@ -13,9 +13,9 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     private removalDelay;
     private removalClassName;
     protected htmlElement: HE;
-    constructor(htmlElement?: HE | DomSelector, ...children: DomChild[]);
+    constructor(htmlElement?: HE | DomSelector, ...children: DomChild<HE>[]);
     private appendText;
-    append(...children: DomChild[]): void;
+    append(...children: DomChild<HE>[]): void;
     private isVisible;
     private notifyVisibility;
     appendTo(parent: DomNode, index?: number): this;
