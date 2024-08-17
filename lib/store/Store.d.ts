@@ -1,7 +1,7 @@
-import { JsonValue } from "@common-module/ts";
-export default class Store {
+import { JsonValue, KebabCase } from "@common-module/ts";
+export default class Store<NT extends string> {
     private readonly prefix;
-    constructor(name: string);
+    constructor(name: KebabCase<NT>);
     private getStorage;
     private getFullKey;
     private static isQuotaExceededError;

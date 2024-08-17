@@ -78,14 +78,14 @@ export default class DomNode<
   private removed = false;
 
   constructor(
-    elementOrSelector: HE | Selector,
+    elementOrSelector?: HE | Selector,
     ...children: DomChild<HE>[]
   ) {
     super();
 
     this.element = elementOrSelector instanceof HTMLElement
       ? elementOrSelector
-      : createElementBySelector(elementOrSelector) as HE;
+      : createElementBySelector(elementOrSelector ?? "") as HE;
 
     this.append(...children);
   }

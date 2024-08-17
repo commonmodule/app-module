@@ -19,7 +19,7 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     private removalDelay;
     private removalClassName;
     private removed;
-    constructor(elementOrSelector: HE | Selector, ...children: DomChild<HE>[]);
+    constructor(elementOrSelector?: HE | Selector, ...children: DomChild<HE>[]);
     private appendText;
     append(...children: DomChild<HE>[]): void;
     private isVisible;

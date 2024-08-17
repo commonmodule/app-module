@@ -1,9 +1,14 @@
-import { JsonUtil, JsonValue } from "@common-module/ts";
+import { JsonUtil, JsonValue, KebabCase, StringUtil } from "@common-module/ts";
 
-export default class Store {
+export default class Store<NT extends string> {
   private readonly prefix: string;
 
-  constructor(name: string) {
+  constructor(name: KebabCase<NT>) {
+    if (!StringUtil.isKebabCase(name)) {
+      throw new Error(
+        "Name must be in kebab-case format (lowercase and hyphens only).",
+      );
+    }
     this.prefix = `${name}/`;
   }
 
