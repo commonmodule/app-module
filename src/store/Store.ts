@@ -94,7 +94,7 @@ export default class Store<NT extends string> {
     return localStorage.getItem(this.getFullKey(key)) !== null;
   }
 
-  public delete(...keys: string[]): void {
+  public remove(...keys: string[]): void {
     keys.forEach((key) => {
       const fullKey = this.getFullKey(key);
       sessionStorage.removeItem(fullKey);

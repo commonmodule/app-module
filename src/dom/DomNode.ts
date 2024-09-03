@@ -2,13 +2,13 @@ import { EventContainer } from "@common-module/ts";
 
 type Tag = "" | keyof HTMLElementTagNameMap;
 
-type Selector =
+export type DomSelector =
   | Tag
   | `${Tag}#${string}`
   | `${Tag}.${string}`
   | `${Tag}#${string}.${string}`;
 
-export type ElementOrSelector = HTMLElement | Selector;
+export type ElementOrSelector = HTMLElement | DomSelector;
 
 type InferElementTypeByTag<TT extends Tag | string> = TT extends ""
   ? HTMLDivElement
@@ -33,20 +33,13 @@ export type InferElementType<EOS extends ElementOrSelector> = EOS extends
       )
   );
 
-type DomNodeOptions<EOS extends ElementOrSelector> =
-  & Partial<InferElementType<EOS>>
-  & {
-    removalDelay?: number;
-    removalClassName?: string;
-  };
-
 export type DomChild<EOS extends ElementOrSelector> =
   | DomNode
-  | DomNodeOptions<EOS>
+  | Partial<InferElementType<EOS>>
   | string
   | undefined;
 
-function createElementBySelector<S extends Selector>(
+function createElementBySelector<S extends DomSelector>(
   selector: S,
 ): InferElementType<S> {
   const parts = (selector || "div").split(/([#.])/);
@@ -70,15 +63,12 @@ export default class DomNode<
 > extends EventContainer<ET & { visible: () => void; remove: () => void }> {
   private parent: DomNode | undefined;
   private children: DomNode[] = [];
+  private removed = false;
 
   public element: HE;
 
-  private removalDelay: number | undefined;
-  private removalClassName: string | undefined;
-  private removed = false;
-
   constructor(
-    elementOrSelector?: HE | Selector,
+    elementOrSelector?: HE | DomSelector,
     ...children: DomChild<HE>[]
   ) {
     super();
@@ -109,15 +99,7 @@ export default class DomNode<
       if (child === undefined) continue;
       else if (child instanceof DomNode) child.appendTo(this);
       else if (typeof child === "string") this.appendText(child);
-      else {
-        if (child.removalDelay !== undefined) {
-          this.removalDelay = child.removalDelay;
-        }
-        if (child.removalClassName !== undefined) {
-          this.removalClassName = child.removalClassName;
-        }
-        Object.assign(this.element, child);
-      }
+      else Object.assign(this.element, child);
     }
   }
 
@@ -164,15 +146,7 @@ export default class DomNode<
       ...([] as Parameters<(ET & { remove: () => void })["remove"]>),
     );
 
-    if (this.removalClassName) {
-      this.element.classList.add(this.removalClassName);
-    }
-
-    if (this.removalDelay === undefined) {
-      this.element.remove();
-    } else {
-      setTimeout(() => this.element.remove(), this.removalDelay);
-    }
+    this.element.remove();
   }
 
   public empty(): this {
@@ -189,9 +163,17 @@ export default class DomNode<
     return this.element.textContent ?? "";
   }
 
-  public style(styles: Partial<CSSStyleDeclaration>): this {
-    Object.assign(this.element.style, styles);
-    return this;
+  public style<T extends Partial<CSSStyleDeclaration> | string>(
+    styles: T,
+  ): T extends string ? string : this {
+    if (typeof styles === "string") {
+      return this.element.style.getPropertyValue(styles) as T extends string
+        ? string
+        : this;
+    } else {
+      Object.assign(this.element.style, styles);
+      return this as T extends string ? string : this;
+    }
   }
 
   public onDom<K extends keyof HTMLElementEventMap>(
@@ -200,6 +182,15 @@ export default class DomNode<
     options?: boolean | AddEventListenerOptions,
   ): this {
     this.element.addEventListener(type, listener as EventListener, options);
+    return this;
+  }
+
+  public offDom<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: HE, event: HTMLElementEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
+  ): this {
+    this.element.removeEventListener(type, listener as EventListener, options);
     return this;
   }
 

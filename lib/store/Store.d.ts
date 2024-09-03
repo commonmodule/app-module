@@ -9,7 +9,7 @@ export default class Store<NT extends string> {
     get<T extends JsonValue>(key: string): T | undefined;
     getAll<T extends JsonValue>(): Record<string, T>;
     isPermanent(key: string): boolean;
-    delete(...keys: string[]): void;
+    remove(...keys: string[]): void;
     clear(): void;
 }
 //# sourceMappingURL=Store.d.ts.map
