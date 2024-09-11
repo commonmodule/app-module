@@ -5,12 +5,12 @@ if (!(window as any).URLPattern) {
   await import("urlpattern-polyfill");
 }
 
-type ViewClass = new () => View;
+type ViewConstructor = new () => View;
 
 class Router {
-  private routes: { urlPattern: URLPattern; View: ViewClass }[] = [];
-  private viewOpening = false;
-  private openingViews: View[] = [];
+  private routes: { urlPattern: URLPattern; View: ViewConstructor }[] = [];
+  private isViewOpening = false;
+  private activeViews: View[] = [];
 
   constructor() {
     window.addEventListener("popstate", (event) => {
@@ -19,30 +19,32 @@ class Router {
     });
   }
 
-  private openView(View: ViewClass, params: ViewParams) {
-    this.viewOpening = true;
+  private openView(View: ViewConstructor, params: ViewParams) {
+    this.isViewOpening = true;
     const view = new View();
     view.changeParams(params);
-    this.openingViews.push(view);
-    this.viewOpening = false;
+    this.activeViews.push(view);
+    this.isViewOpening = false;
   }
 
-  public route(uri: string, View: ViewClass) {
-    const pathname = "/" + uri;
+  public add(pathname: `/${string}`, View: ViewConstructor) {
     const urlPattern = new URLPattern({ pathname });
     this.routes.push({ urlPattern, View });
 
     const params = urlPattern.exec({ pathname: location.pathname })?.pathname
       .groups;
     if (params) this.openView(View, params);
+
+    return this;
   }
 
-  private changeUri(uri: string) {
-    const pathname = "/" + uri;
-    history.pushState(undefined, "", pathname);
+  private performNavigation(pathname: `/${string}`, replace: boolean) {
+    replace
+      ? history.replaceState(undefined, "", pathname)
+      : history.pushState(undefined, "", pathname);
 
     for (const route of this.routes) {
-      const openingView = this.openingViews.find((view) =>
+      const openingView = this.activeViews.find((view) =>
         view instanceof route.View
       );
       const params = route.urlPattern.exec({ pathname: location.pathname })
@@ -53,16 +55,28 @@ class Router {
           : this.openView(route.View, params);
       } else if (openingView) {
         openingView.close();
-        ArrayUtil.pull(this.openingViews, openingView);
+        ArrayUtil.pull(this.activeViews, openingView);
       }
     }
   }
 
-  public go(uri: string) {
-    const pathname = "/" + uri;
+  public go(pathname: `/${string}`) {
     if (location.pathname !== pathname) {
-      if (this.viewOpening) setTimeout(() => this.changeUri(uri));
-      else this.changeUri(uri);
+      if (this.isViewOpening) {
+        setTimeout(() => this.performNavigation(pathname, false));
+      } else {
+        this.performNavigation(pathname, false);
+      }
+    }
+  }
+
+  public goWithoutHistory(pathname: `/${string}`) {
+    if (location.pathname !== pathname) {
+      if (this.isViewOpening) {
+        setTimeout(() => this.performNavigation(pathname, true), 0);
+      } else {
+        this.performNavigation(pathname, true);
+      }
     }
   }
 }

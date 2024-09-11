@@ -1,14 +1,15 @@
 import View from "./View.js";
-type ViewClass = new () => View;
+type ViewConstructor = new () => View;
 declare class Router {
     private routes;
-    private viewOpening;
-    private openingViews;
+    private isViewOpening;
+    private activeViews;
     constructor();
     private openView;
-    route(uri: string, View: ViewClass): void;
-    private changeUri;
-    go(uri: string): void;
+    add(pathname: `/${string}`, View: ViewConstructor): this;
+    private performNavigation;
+    go(pathname: `/${string}`): void;
+    goWithoutHistory(pathname: `/${string}`): void;
 }
 declare const _default: Router;
 export default _default;
