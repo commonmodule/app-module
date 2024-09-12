@@ -1,9 +1,4 @@
-import {
-  EventContainerMixin,
-  EventContainerType,
-  TreeNodeMixin,
-  TreeNodeType,
-} from "@common-module/ts";
+import { EventTreeNode } from "@common-module/ts";
 
 type Tag = "" | keyof HTMLElementTagNameMap;
 
@@ -65,19 +60,10 @@ function createElementBySelector<S extends DomSelector>(
 export default class DomNode<
   HE extends HTMLElement = HTMLElement,
   ET extends Record<string, (...args: any[]) => any> = {},
-> extends TreeNodeMixin(EventContainerMixin(Object))
-  implements
-    TreeNodeType<DomNode>,
-    EventContainerType<ET & { visible: () => void; remove: () => void }> {
-  declare parent: DomNode | undefined;
-  declare children: DomNode[];
-
-  declare on: <K extends keyof ET>(eventName: K, eventHandler: ET[K]) => void;
-  declare emit: <K extends keyof ET>(
-    eventName: K,
-    ...args: Parameters<ET[K]>
-  ) => ReturnType<ET[K]>[];
-
+> extends EventTreeNode<
+  DomNode,
+  ET & { visible: () => void; remove: () => void }
+> {
   private removed = false;
 
   public element: HE;
@@ -111,20 +97,15 @@ export default class DomNode<
 
   public append(...children: DomChild<HE>[]) {
     for (const child of children) {
-      if (child === undefined) {
-        continue;
-      } else if (child instanceof DomNode) {
-        child.appendTo(this as unknown as DomNode);
-      } else if (typeof child === "string") {
-        this.appendText(child);
-      } else {
-        Object.assign(this.element, child);
-      }
+      if (child === undefined) continue;
+      else if (child instanceof DomNode) child.appendTo(this);
+      else if (typeof child === "string") this.appendText(child);
+      else Object.assign(this.element, child);
     }
   }
 
   private isVisible(): boolean {
-    let currentNode: DomNode | undefined = this as unknown as DomNode;
+    let currentNode: DomNode | undefined = this;
     while (currentNode !== undefined) {
       if (currentNode.element === document.body) {
         return true;
