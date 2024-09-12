@@ -1,4 +1,9 @@
-import { EventContainer } from "@common-module/ts";
+import {
+  EventContainerMixin,
+  EventContainerType,
+  TreeNodeMixin,
+  TreeNodeType,
+} from "@common-module/ts";
 
 type Tag = "" | keyof HTMLElementTagNameMap;
 
@@ -60,9 +65,19 @@ function createElementBySelector<S extends DomSelector>(
 export default class DomNode<
   HE extends HTMLElement = HTMLElement,
   ET extends Record<string, (...args: any[]) => any> = {},
-> extends EventContainer<ET & { visible: () => void; remove: () => void }> {
-  private parent: DomNode | undefined;
-  private children: DomNode[] = [];
+> extends TreeNodeMixin(EventContainerMixin(Object))
+  implements
+    TreeNodeType<DomNode>,
+    EventContainerType<ET & { visible: () => void; remove: () => void }> {
+  declare parent: DomNode | undefined;
+  declare children: DomNode[];
+
+  declare on: <K extends keyof ET>(eventName: K, eventHandler: ET[K]) => void;
+  declare emit: <K extends keyof ET>(
+    eventName: K,
+    ...args: Parameters<ET[K]>
+  ) => ReturnType<ET[K]>[];
+
   private removed = false;
 
   public element: HE;
@@ -96,15 +111,20 @@ export default class DomNode<
 
   public append(...children: DomChild<HE>[]) {
     for (const child of children) {
-      if (child === undefined) continue;
-      else if (child instanceof DomNode) child.appendTo(this);
-      else if (typeof child === "string") this.appendText(child);
-      else Object.assign(this.element, child);
+      if (child === undefined) {
+        continue;
+      } else if (child instanceof DomNode) {
+        child.appendTo(this as unknown as DomNode);
+      } else if (typeof child === "string") {
+        this.appendText(child);
+      } else {
+        Object.assign(this.element, child);
+      }
     }
   }
 
   private isVisible(): boolean {
-    let currentNode: DomNode | undefined = this;
+    let currentNode: DomNode | undefined = this as unknown as DomNode;
     while (currentNode !== undefined) {
       if (currentNode.element === document.body) {
         return true;
@@ -130,7 +150,8 @@ export default class DomNode<
       const referenceNode = parent.element.childNodes[index];
       parent.element.insertBefore(this.element, referenceNode);
     }
-    this.parent = parent;
+
+    super.appendTo(parent, index);
 
     if (this.isVisible()) this.notifyVisibility();
 
@@ -147,6 +168,8 @@ export default class DomNode<
     );
 
     this.element.remove();
+
+    super.remove();
   }
 
   public empty(): this {
