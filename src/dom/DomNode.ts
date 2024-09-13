@@ -64,8 +64,6 @@ export default class DomNode<
   DomNode,
   ET & { visible: () => void; remove: () => void }
 > {
-  private removed = false;
-
   public element: HE;
 
   constructor(
@@ -141,7 +139,6 @@ export default class DomNode<
 
   public remove() {
     if (this.removed) return;
-    this.removed = true;
 
     this.emit(
       "remove",

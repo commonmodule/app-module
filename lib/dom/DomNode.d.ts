@@ -9,7 +9,6 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     visible: () => void;
     remove: () => void;
 }> {
-    private removed;
     element: HE;
     constructor(elementOrSelector?: HE | DomSelector, ...children: DomChild<HE>[]);
     private appendText;
