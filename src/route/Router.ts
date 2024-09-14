@@ -1,4 +1,4 @@
-import { ArrayUtil } from "@common-module/ts";
+import { ArrayUtils } from "@common-module/ts";
 import View, { ViewParams } from "./View.js";
 
 if (!(window as any).URLPattern) {
@@ -55,7 +55,7 @@ class Router {
           : this.openView(route.View, params);
       } else if (openingView) {
         openingView.close();
-        ArrayUtil.pull(this.activeViews, openingView);
+        ArrayUtils.pull(this.activeViews, openingView);
       }
     }
   }

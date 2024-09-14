@@ -1,10 +1,15 @@
-import { JsonUtil, JsonValue, KebabCase, StringUtil } from "@common-module/ts";
+import {
+  JsonUtils,
+  JsonValue,
+  KebabCase,
+  StringUtils,
+} from "@common-module/ts";
 
 export default class Store<NT extends string> {
   private readonly prefix: string;
 
   constructor(name: KebabCase<NT>) {
-    if (!StringUtil.isKebabCase(name)) {
+    if (!StringUtils.isKebabCase(name)) {
       throw new Error(
         "Name must be in kebab-case format (lowercase and hyphens only).",
       );
@@ -55,7 +60,7 @@ export default class Store<NT extends string> {
     if (value === null) return undefined;
 
     try {
-      return JsonUtil.parseWithUndefined<T>(value);
+      return JsonUtils.parseWithUndefined<T>(value);
     } catch (e) {
       console.error(`Failed to parse ${fullKey}: ${value}`);
       console.error(e);
@@ -74,7 +79,7 @@ export default class Store<NT extends string> {
             const parsedKey = key.slice(this.prefix.length);
 
             try {
-              result[parsedKey] = JsonUtil.parseWithUndefined<T>(value);
+              result[parsedKey] = JsonUtils.parseWithUndefined<T>(value);
             } catch (e) {
               console.error(`Failed to parse ${key}: ${value}`);
               console.error(e);
