@@ -6,7 +6,7 @@ export default class WindowEventContainer {
     originalListener: Function;
   }> = [];
 
-  public onDom<K extends keyof WindowEventMap>(
+  public onWindow<K extends keyof WindowEventMap>(
     type: K,
     listener: (ev: WindowEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions,
@@ -24,7 +24,7 @@ export default class WindowEventContainer {
     return this;
   }
 
-  public offDom<K extends keyof WindowEventMap>(
+  public offWindow<K extends keyof WindowEventMap>(
     type: K,
     listener: (ev: WindowEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
