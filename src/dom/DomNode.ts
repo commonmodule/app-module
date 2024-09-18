@@ -33,9 +33,13 @@ export type InferElementType<EOS extends ElementOrSelector> = EOS extends
       )
   );
 
+type ElementProperties<EOS extends ElementOrSelector> =
+  & Partial<Omit<InferElementType<EOS>, "style">>
+  & { style?: Partial<CSSStyleDeclaration> };
+
 export type DomChild<EOS extends ElementOrSelector> =
   | DomNode
-  | Partial<InferElementType<EOS>>
+  | ElementProperties<InferElementType<EOS>>
   | string
   | undefined;
 

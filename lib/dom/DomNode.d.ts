@@ -4,7 +4,10 @@ export type DomSelector = Tag | `${Tag}#${string}` | `${Tag}.${string}` | `${Tag
 export type ElementOrSelector = HTMLElement | DomSelector;
 type InferElementTypeByTag<TT extends Tag | string> = TT extends "" ? HTMLDivElement : (TT extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TT] : HTMLElement);
 export type InferElementType<EOS extends ElementOrSelector> = EOS extends HTMLElement ? EOS : (EOS extends "" ? HTMLDivElement : (EOS extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[EOS] : (EOS extends `${infer TT}#${string}` ? InferElementTypeByTag<TT> : (EOS extends `${infer TT}.${string}` ? InferElementTypeByTag<TT> : HTMLElement))));
-export type DomChild<EOS extends ElementOrSelector> = DomNode | Partial<InferElementType<EOS>> | string | undefined;
+type ElementProperties<EOS extends ElementOrSelector> = Partial<Omit<InferElementType<EOS>, "style">> & {
+    style?: Partial<CSSStyleDeclaration>;
+};
+export type DomChild<EOS extends ElementOrSelector> = DomNode | ElementProperties<InferElementType<EOS>> | string | undefined;
 export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Record<string, (...args: any[]) => any> = {}> extends EventTreeNode<DomNode, ET & {
     visible: () => void;
     remove: () => void;
