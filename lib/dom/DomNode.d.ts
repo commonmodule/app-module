@@ -12,7 +12,7 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     visible: () => void;
     remove: () => void;
 }> {
-    element: HE;
+    htmlElement: HE;
     constructor(elementOrSelector?: HE | DomSelector, ...children: DomChild<HE>[]);
     private appendText;
     append(...children: DomChild<HE>[]): void;

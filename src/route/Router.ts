@@ -16,6 +16,8 @@ class Router {
     window.addEventListener("popstate", (event) => {
       //TODO:
       console.log(event);
+
+      this.updateActiveViews();
     });
   }
 
@@ -38,11 +40,7 @@ class Router {
     return this;
   }
 
-  private performNavigation(pathname: `/${string}`, replace: boolean) {
-    replace
-      ? history.replaceState(undefined, "", pathname)
-      : history.pushState(undefined, "", pathname);
-
+  private updateActiveViews() {
     for (const route of this.routes) {
       const openingView = this.activeViews.find((view) =>
         view instanceof route.View
@@ -58,6 +56,14 @@ class Router {
         ArrayUtils.pull(this.activeViews, openingView);
       }
     }
+  }
+
+  private performNavigation(pathname: `/${string}`, replace: boolean) {
+    replace
+      ? history.replaceState(undefined, "", pathname)
+      : history.pushState(undefined, "", pathname);
+
+    this.updateActiveViews();
   }
 
   public go(pathname: `/${string}`) {

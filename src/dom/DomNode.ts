@@ -68,7 +68,7 @@ export default class DomNode<
   DomNode,
   ET & { visible: () => void; remove: () => void }
 > {
-  public element: HE;
+  public htmlElement: HE;
 
   constructor(
     elementOrSelector?: HE | DomSelector,
@@ -76,7 +76,7 @@ export default class DomNode<
   ) {
     super();
 
-    this.element = elementOrSelector instanceof HTMLElement
+    this.htmlElement = elementOrSelector instanceof HTMLElement
       ? elementOrSelector
       : createElementBySelector(elementOrSelector ?? "") as HE;
 
@@ -84,15 +84,15 @@ export default class DomNode<
   }
 
   private appendText(text: string): this {
-    if (this.element instanceof HTMLTextAreaElement) {
-      this.element.value += text;
+    if (this.htmlElement instanceof HTMLTextAreaElement) {
+      this.htmlElement.value += text;
     } else {
       const fragment = document.createDocumentFragment();
       text.split("\n").forEach((line, index) => {
         if (index > 0) fragment.appendChild(document.createElement("br"));
         fragment.appendChild(document.createTextNode(line));
       });
-      this.element.appendChild(fragment);
+      this.htmlElement.appendChild(fragment);
     }
     return this;
   }
@@ -102,14 +102,14 @@ export default class DomNode<
       if (child === undefined) continue;
       else if (child instanceof DomNode) child.appendTo(this);
       else if (typeof child === "string") this.appendText(child);
-      else Object.assign(this.element, child);
+      else Object.assign(this.htmlElement, child);
     }
   }
 
   private isVisible(): boolean {
     let currentNode: DomNode | undefined = this;
     while (currentNode !== undefined) {
-      if (currentNode.element === document.body) {
+      if (currentNode.htmlElement === document.body) {
         return true;
       }
       currentNode = currentNode.parent;
@@ -127,11 +127,11 @@ export default class DomNode<
   }
 
   public appendTo(parent: DomNode, index?: number): this {
-    if (index === undefined || index >= parent.element.childNodes.length) {
-      parent.element.appendChild(this.element);
+    if (index === undefined || index >= parent.htmlElement.childNodes.length) {
+      parent.htmlElement.appendChild(this.htmlElement);
     } else {
-      const referenceNode = parent.element.childNodes[index];
-      parent.element.insertBefore(this.element, referenceNode);
+      const referenceNode = parent.htmlElement.childNodes[index];
+      parent.htmlElement.insertBefore(this.htmlElement, referenceNode);
     }
 
     super.appendTo(parent, index);
@@ -149,13 +149,13 @@ export default class DomNode<
       ...([] as Parameters<(ET & { remove: () => void })["remove"]>),
     );
 
-    this.element.remove();
+    this.htmlElement.remove();
 
     super.remove();
   }
 
   public empty(): this {
-    this.element.innerHTML = "";
+    this.htmlElement.innerHTML = "";
     return this;
   }
 
@@ -165,18 +165,18 @@ export default class DomNode<
   }
 
   public get text(): string {
-    return this.element.textContent ?? "";
+    return this.htmlElement.textContent ?? "";
   }
 
   public style<T extends Partial<CSSStyleDeclaration> | string>(
     styles: T,
   ): T extends string ? string : this {
     if (typeof styles === "string") {
-      return this.element.style.getPropertyValue(styles) as T extends string
+      return this.htmlElement.style.getPropertyValue(styles) as T extends string
         ? string
         : this;
     } else {
-      Object.assign(this.element.style, styles);
+      Object.assign(this.htmlElement.style, styles);
       return this as T extends string ? string : this;
     }
   }
@@ -186,7 +186,7 @@ export default class DomNode<
     listener: (this: HE, event: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions,
   ): this {
-    this.element.addEventListener(type, listener as EventListener, options);
+    this.htmlElement.addEventListener(type, listener as EventListener, options);
     return this;
   }
 
@@ -195,11 +195,11 @@ export default class DomNode<
     listener: (this: HE, event: HTMLElementEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
   ): this {
-    this.element.removeEventListener(type, listener as EventListener, options);
+    this.htmlElement.removeEventListener(type, listener as EventListener, options);
     return this;
   }
 
   public calculateRect(): DOMRect {
-    return this.element.getBoundingClientRect();
+    return this.htmlElement.getBoundingClientRect();
   }
 }
