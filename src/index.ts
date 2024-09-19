@@ -6,3 +6,4 @@ export { default as View } from "./route/View.js";
 export { default as SPAInitializer } from "./SPAInitializer.js";
 export { default as Store } from "./store/Store.js";
 export { default as BrowserInfo } from "./utils/BrowserInfo.js";
+export { default as StyleUtils } from "./utils/StyleUtils.js";
