@@ -102,7 +102,10 @@ export default class DomNode<
       if (child === undefined) continue;
       else if (child instanceof DomNode) child.appendTo(this);
       else if (typeof child === "string") this.appendText(child);
-      else Object.assign(this.htmlElement, child);
+      else {
+        Object.assign(this.htmlElement, child);
+        if (child.style) this.style(child.style);
+      }
     }
   }
 
