@@ -1,4 +1,4 @@
-import { EventTreeNode } from "@common-module/ts";
+import WindowEventTreeNode from "./WindowEventTreeNode.js";
 
 type Tag = "" | keyof HTMLElementTagNameMap;
 
@@ -64,7 +64,7 @@ function createElementBySelector<S extends DomSelector>(
 export default class DomNode<
   HE extends HTMLElement = HTMLElement,
   ET extends Record<string, (...args: any[]) => any> = {},
-> extends EventTreeNode<
+> extends WindowEventTreeNode<
   DomNode,
   ET & { visible: () => void; remove: () => void }
 > {
@@ -195,7 +195,11 @@ export default class DomNode<
     listener: (this: HE, event: HTMLElementEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
   ): this {
-    this.htmlElement.removeEventListener(type, listener as EventListener, options);
+    this.htmlElement.removeEventListener(
+      type,
+      listener as EventListener,
+      options,
+    );
     return this;
   }
 

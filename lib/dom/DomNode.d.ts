@@ -1,4 +1,4 @@
-import { EventTreeNode } from "@common-module/ts";
+import WindowEventTreeNode from "./WindowEventTreeNode.js";
 type Tag = "" | keyof HTMLElementTagNameMap;
 export type DomSelector = Tag | `${Tag}#${string}` | `${Tag}.${string}` | `${Tag}#${string}.${string}`;
 export type ElementOrSelector = HTMLElement | DomSelector;
@@ -8,7 +8,7 @@ type ElementProperties<EOS extends ElementOrSelector> = Partial<Omit<InferElemen
     style?: Partial<CSSStyleDeclaration>;
 };
 export type DomChild<EOS extends ElementOrSelector> = DomNode | ElementProperties<InferElementType<EOS>> | string | undefined;
-export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Record<string, (...args: any[]) => any> = {}> extends EventTreeNode<DomNode, ET & {
+export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Record<string, (...args: any[]) => any> = {}> extends WindowEventTreeNode<DomNode, ET & {
     visible: () => void;
     remove: () => void;
 }> {

@@ -1,4 +1,9 @@
-export default class WindowEventContainer {
+import { EventTreeNode } from "@common-module/ts";
+
+export default class WindowEventTreeNode<
+  TT extends EventTreeNode<TT, ET>,
+  ET extends Record<string, (...args: any[]) => any>,
+> extends EventTreeNode<TT, ET> {
   private listeners: Array<{
     type: keyof WindowEventMap;
     listener: EventListener;
