@@ -97,7 +97,7 @@ export default class DomNode<
     return this;
   }
 
-  public append(...children: DomChild<HE>[]) {
+  public append(...children: DomChild<HE>[]): this {
     for (const child of children) {
       if (child === undefined) continue;
       else if (child instanceof DomNode) child.appendTo(this);
@@ -107,6 +107,7 @@ export default class DomNode<
         if (child.style) this.style(child.style);
       }
     }
+    return this;
   }
 
   private isVisible(): boolean {
