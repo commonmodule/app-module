@@ -5,7 +5,9 @@ export default class Store<NT extends string> {
     private getStorage;
     private getFullKey;
     private static isQuotaExceededError;
-    set(key: string, value: JsonValue, permanent?: boolean): void;
+    private setValue;
+    setTemporary(key: string, value: JsonValue): void;
+    setPermanent(key: string, value: JsonValue): void;
     get<T extends JsonValue>(key: string): T | undefined;
     getAll<T extends JsonValue>(): Record<string, T>;
     isPermanent(key: string): boolean;

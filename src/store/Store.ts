@@ -34,7 +34,7 @@ export default class Store<NT extends string> {
     );
   }
 
-  public set(key: string, value: JsonValue, permanent = false): void {
+  private setValue(key: string, value: JsonValue, permanent: boolean): void {
     const storage = this.getStorage(permanent);
     const fullKey = this.getFullKey(key);
 
@@ -50,6 +50,14 @@ export default class Store<NT extends string> {
         throw e;
       }
     }
+  }
+
+  public setTemporary(key: string, value: JsonValue): void {
+    this.setValue(key, value, false);
+  }
+
+  public setPermanent(key: string, value: JsonValue): void {
+    this.setValue(key, value, true);
   }
 
   public get<T extends JsonValue>(key: string): T | undefined {
