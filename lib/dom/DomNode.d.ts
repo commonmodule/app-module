@@ -7,15 +7,17 @@ export type InferElementType<EOS extends ElementOrSelector> = EOS extends HTMLEl
 type ElementProperties<EOS extends ElementOrSelector> = Partial<Omit<InferElementType<EOS>, "style">> & {
     style?: Partial<CSSStyleDeclaration>;
 };
-export type DomChild<EOS extends ElementOrSelector> = DomNode | ElementProperties<InferElementType<EOS>> | string | undefined;
+export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = DomNode | ElementProperties<InferElementType<EOS>> | string | undefined;
 export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Record<string, (...args: any[]) => any> = {}> extends WindowEventTreeNode<DomNode, ET & {
     visible: () => void;
     remove: () => void;
 }> {
     htmlElement: HE;
     constructor(elementOrSelector?: HE | DomSelector, ...children: DomChild<HE>[]);
+    private prependText;
     private appendText;
-    append(...children: DomChild<HE>[]): void;
+    prepend(...children: DomChild<HE>[]): this;
+    append(...children: DomChild<HE>[]): this;
     private isVisible;
     private notifyVisibility;
     appendTo(parent: DomNode, index?: number): this;
@@ -23,6 +25,8 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     empty(): this;
     set text(text: string | undefined);
     get text(): string;
+    addClass(...classNames: string[]): this;
+    removeClass(...classNames: string[]): this;
     style<T extends Partial<CSSStyleDeclaration> | string>(styles: T): T extends string ? string : this;
     onDom<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HE, event: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): this;
     offDom<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HE, event: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): this;

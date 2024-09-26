@@ -37,7 +37,7 @@ type ElementProperties<EOS extends ElementOrSelector> =
   & Partial<Omit<InferElementType<EOS>, "style">>
   & { style?: Partial<CSSStyleDeclaration> };
 
-export type DomChild<EOS extends ElementOrSelector> =
+export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
   | DomNode
   | ElementProperties<InferElementType<EOS>>
   | string
@@ -83,6 +83,20 @@ export default class DomNode<
     this.append(...children);
   }
 
+  private prependText(text: string): this {
+    if (this.htmlElement instanceof HTMLTextAreaElement) {
+      this.htmlElement.value = text + this.htmlElement.value;
+    } else {
+      const fragment = document.createDocumentFragment();
+      text.split("\n").forEach((line, index) => {
+        if (index > 0) fragment.appendChild(document.createElement("br"));
+        fragment.appendChild(document.createTextNode(line));
+      });
+      this.htmlElement.prepend(fragment);
+    }
+    return this;
+  }
+
   private appendText(text: string): this {
     if (this.htmlElement instanceof HTMLTextAreaElement) {
       this.htmlElement.value += text;
@@ -93,6 +107,19 @@ export default class DomNode<
         fragment.appendChild(document.createTextNode(line));
       });
       this.htmlElement.appendChild(fragment);
+    }
+    return this;
+  }
+
+  public prepend(...children: DomChild<HE>[]): this {
+    for (const child of children) {
+      if (child === undefined) continue;
+      else if (child instanceof DomNode) child.appendTo(this, 0);
+      else if (typeof child === "string") this.prependText(child);
+      else {
+        Object.assign(this.htmlElement, child);
+        if (child.style) this.style(child.style);
+      }
     }
     return this;
   }
@@ -170,6 +197,16 @@ export default class DomNode<
 
   public get text(): string {
     return this.htmlElement.textContent ?? "";
+  }
+
+  public addClass(...classNames: string[]): this {
+    this.htmlElement.classList.add(...classNames);
+    return this;
+  }
+
+  public removeClass(...classNames: string[]): this {
+    this.htmlElement.classList.remove(...classNames);
+    return this;
   }
 
   public style<T extends Partial<CSSStyleDeclaration> | string>(
