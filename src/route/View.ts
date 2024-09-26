@@ -13,7 +13,7 @@ export default abstract class View<CT extends DomNode = DomNode> {
 
   public changeParams(params: ViewParams): void {}
 
-  protected addEvent<
+  protected addViewManagedEvent<
     T extends EventContainer<ET>,
     ET extends Record<string, (...args: any[]) => any>,
     K extends keyof ET,
