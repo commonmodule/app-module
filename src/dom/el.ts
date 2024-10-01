@@ -1,15 +1,14 @@
-import { ElFunction } from "@common-module/universal-page";
 import DomNode, {
   DomChild,
   ElementOrSelector,
-  InferElementType,
+  InferElementType
 } from "./DomNode.js";
 
-const el: ElFunction<DomNode<InferElementType<ElementOrSelector>>> = function (
-  elementOrSelector: ElementOrSelector,
-  ...children: DomChild<ElementOrSelector>[]
-): DomNode<InferElementType<ElementOrSelector>> {
-  return new DomNode(elementOrSelector, ...children);
-};
-
-export default el;
+export default function el<EOS extends ElementOrSelector = HTMLElement>(
+  elementOrSelector: EOS,
+  ...children: DomChild<EOS>[]
+): DomNode<InferElementType<EOS>> {
+  return new DomNode(elementOrSelector, ...children) as DomNode<
+    InferElementType<EOS>
+  >;
+}

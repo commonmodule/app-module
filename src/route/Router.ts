@@ -17,7 +17,7 @@ class Router {
       //TODO:
       console.log(event);
 
-      this.updateActiveViews();
+      this.updateActiveViews(event.state);
     });
   }
 
@@ -40,17 +40,25 @@ class Router {
     return this;
   }
 
-  private updateActiveViews() {
+  private updateActiveViews(params: ViewParams | undefined) {
     for (const route of this.routes) {
       const openingView = this.activeViews.find((view) =>
         view instanceof route.View
       );
-      const params = route.urlPattern.exec({ pathname: location.pathname })
-        ?.pathname.groups;
-      if (params) {
+
+      const urlPatternParams = route.urlPattern.exec({
+        pathname: location.pathname,
+      })?.pathname.groups;
+
+      if (urlPatternParams) {
+        if (params) Object.assign(params, urlPatternParams);
+        else params = urlPatternParams;
+      }
+
+      if (urlPatternParams) {
         openingView
-          ? openingView.changeParams(params)
-          : this.openView(route.View, params);
+          ? openingView.changeParams(params!)
+          : this.openView(route.View, params!);
       } else if (openingView) {
         openingView.close();
         ArrayUtils.pull(this.activeViews, openingView);
@@ -58,30 +66,34 @@ class Router {
     }
   }
 
-  private performNavigation(pathname: `/${string}`, replace: boolean) {
+  private performNavigation(
+    pathname: `/${string}`,
+    params: ViewParams | undefined,
+    replace: boolean,
+  ) {
     replace
       ? history.replaceState(undefined, "", pathname)
       : history.pushState(undefined, "", pathname);
 
-    this.updateActiveViews();
+    this.updateActiveViews(params);
   }
 
-  public go(pathname: `/${string}`) {
+  public go(pathname: `/${string}`, params?: ViewParams) {
     if (location.pathname !== pathname) {
       if (this.isViewOpening) {
-        setTimeout(() => this.performNavigation(pathname, false));
+        setTimeout(() => this.performNavigation(pathname, params, false), 0);
       } else {
-        this.performNavigation(pathname, false);
+        this.performNavigation(pathname, params, false);
       }
     }
   }
 
-  public goWithoutHistory(pathname: `/${string}`) {
+  public goWithoutHistory(pathname: `/${string}`, params?: ViewParams) {
     if (location.pathname !== pathname) {
       if (this.isViewOpening) {
-        setTimeout(() => this.performNavigation(pathname, true), 0);
+        setTimeout(() => this.performNavigation(pathname, params, true), 0);
       } else {
-        this.performNavigation(pathname, true);
+        this.performNavigation(pathname, params, true);
       }
     }
   }
