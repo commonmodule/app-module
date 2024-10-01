@@ -1,4 +1,4 @@
-import { JsonValue, KebabCase } from "@common-module/ts";
+import { KebabCase } from "@common-module/ts";
 export default class Store<NT extends string> {
     private readonly prefix;
     constructor(name: KebabCase<NT>);
@@ -6,10 +6,10 @@ export default class Store<NT extends string> {
     private getFullKey;
     private static isQuotaExceededError;
     private setValue;
-    setTemporary(key: string, value: JsonValue): void;
-    setPermanent(key: string, value: JsonValue): void;
-    get<T extends JsonValue>(key: string): T | undefined;
-    getAll<T extends JsonValue>(): Record<string, T>;
+    setTemporary<T>(key: string, value: T): void;
+    setPermanent<T>(key: string, value: T): void;
+    get<T>(key: string): T | undefined;
+    getAll<T>(): Record<string, T>;
     isPermanent(key: string): boolean;
     remove(...keys: string[]): void;
     clear(): void;

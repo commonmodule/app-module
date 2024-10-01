@@ -1,9 +1,4 @@
-import {
-  JsonUtils,
-  JsonValue,
-  KebabCase,
-  StringUtils,
-} from "@common-module/ts";
+import { JsonUtils, KebabCase, StringUtils } from "@common-module/ts";
 
 export default class Store<NT extends string> {
   private readonly prefix: string;
@@ -34,7 +29,7 @@ export default class Store<NT extends string> {
     );
   }
 
-  private setValue(key: string, value: JsonValue, permanent: boolean): void {
+  private setValue<T>(key: string, value: T, permanent: boolean): void {
     const storage = this.getStorage(permanent);
     const fullKey = this.getFullKey(key);
 
@@ -52,15 +47,15 @@ export default class Store<NT extends string> {
     }
   }
 
-  public setTemporary(key: string, value: JsonValue): void {
+  public setTemporary<T>(key: string, value: T): void {
     this.setValue(key, value, false);
   }
 
-  public setPermanent(key: string, value: JsonValue): void {
+  public setPermanent<T>(key: string, value: T): void {
     this.setValue(key, value, true);
   }
 
-  public get<T extends JsonValue>(key: string): T | undefined {
+  public get<T>(key: string): T | undefined {
     const fullKey = this.getFullKey(key);
     const value = sessionStorage.getItem(fullKey) ??
       localStorage.getItem(fullKey);
@@ -75,7 +70,7 @@ export default class Store<NT extends string> {
     }
   }
 
-  public getAll<T extends JsonValue>(): Record<string, T> {
+  public getAll<T>(): Record<string, T> {
     const result: Record<string, T> = {};
 
     const processStorage = (storage: Storage) => {
