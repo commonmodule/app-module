@@ -7,8 +7,8 @@
   "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
   "dependencies": {
-    "@common-module/ts": "^0.0.1",
-    "@common-module/universal-page": "^0.0.1",
+    "@common-module/ts": "^0.1.0",
+    "@common-module/universal-page": "^0.1.0",
     "urlpattern-polyfill": "^10.0.0"
   },
   "devDependencies": {}
