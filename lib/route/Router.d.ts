@@ -1,5 +1,5 @@
-import View, { ViewParams } from "./View.js";
-type ViewConstructor = new () => View;
+import View from "./View.js";
+type ViewConstructor = new () => View<any>;
 declare class Router {
     private routes;
     private isViewOpening;
@@ -7,10 +7,10 @@ declare class Router {
     constructor();
     private openView;
     add(pathname: `/${string}`, View: ViewConstructor): this;
-    updateActiveViews(params?: ViewParams): void;
+    updateActiveViews(data?: any): void;
     private performNavigation;
-    go(pathname: `/${string}`, params?: ViewParams): void;
-    goWithoutHistory(pathname: `/${string}`, params?: ViewParams): void;
+    go(pathname: `/${string}`, data?: any): void;
+    goWithoutHistory(pathname: `/${string}`, data?: any): void;
 }
 declare const _default: Router;
 export default _default;

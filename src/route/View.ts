@@ -1,17 +1,13 @@
 import { EventContainer } from "@common-module/ts";
 import DomNode from "../dom/DomNode.js";
 
-export interface ViewParams {
-  [name: string]: string | undefined;
-}
-
-export default abstract class View<CT extends DomNode = DomNode> {
+export default abstract class View<DT = {}, CT extends DomNode = DomNode> {
   private eventListeners: Map<EventContainer<any>, Map<string, EventListener>> =
     new Map();
 
   protected container!: CT;
 
-  public changeParams(params: ViewParams): void {}
+  public changeData(data: DT): void {}
 
   protected addViewManagedEvent<
     T extends EventContainer<ET>,

@@ -1,16 +1,16 @@
 import { ArrayUtils } from "@common-module/ts";
-import View, { ViewParams } from "./View.js";
+import View from "./View.js";
 
 if (!(window as any).URLPattern) {
   await import("urlpattern-polyfill");
 }
 
-type ViewConstructor = new () => View;
+type ViewConstructor = new () => View<any>;
 
 class Router {
   private routes: { urlPattern: URLPattern; View: ViewConstructor }[] = [];
   private isViewOpening = false;
-  private activeViews: View[] = [];
+  private activeViews: View<any>[] = [];
 
   constructor() {
     window.addEventListener("popstate", (event) => {
@@ -21,10 +21,10 @@ class Router {
     });
   }
 
-  private openView(View: ViewConstructor, params: ViewParams) {
+  private openView(View: ViewConstructor, data: any) {
     this.isViewOpening = true;
     const view = new View();
-    view.changeParams(params);
+    view.changeData(data);
     this.activeViews.push(view);
     this.isViewOpening = false;
   }
@@ -40,7 +40,7 @@ class Router {
     return this;
   }
 
-  public updateActiveViews(params?: ViewParams) {
+  public updateActiveViews(data?: any) {
     for (const route of this.routes) {
       const openingView = this.activeViews.find((view) =>
         view instanceof route.View
@@ -51,14 +51,14 @@ class Router {
       })?.pathname.groups;
 
       if (urlPatternParams) {
-        if (params) Object.assign(params, urlPatternParams);
-        else params = urlPatternParams;
+        if (data) Object.assign(data, urlPatternParams);
+        else data = urlPatternParams;
       }
 
       if (urlPatternParams) {
         openingView
-          ? openingView.changeParams(params!)
-          : this.openView(route.View, params!);
+          ? openingView.changeData(data)
+          : this.openView(route.View, data);
       } else if (openingView) {
         openingView.close();
         ArrayUtils.pull(this.activeViews, openingView);
@@ -68,32 +68,32 @@ class Router {
 
   private performNavigation(
     pathname: `/${string}`,
-    params: ViewParams | undefined,
+    data: any,
     replace: boolean,
   ) {
     replace
       ? history.replaceState(undefined, "", pathname)
       : history.pushState(undefined, "", pathname);
 
-    this.updateActiveViews(params);
+    this.updateActiveViews(data);
   }
 
-  public go(pathname: `/${string}`, params?: ViewParams) {
+  public go(pathname: `/${string}`, data?: any) {
     if (location.pathname !== pathname) {
       if (this.isViewOpening) {
-        setTimeout(() => this.performNavigation(pathname, params, false), 0);
+        setTimeout(() => this.performNavigation(pathname, data, false), 0);
       } else {
-        this.performNavigation(pathname, params, false);
+        this.performNavigation(pathname, data, false);
       }
     }
   }
 
-  public goWithoutHistory(pathname: `/${string}`, params?: ViewParams) {
+  public goWithoutHistory(pathname: `/${string}`, data?: any) {
     if (location.pathname !== pathname) {
       if (this.isViewOpening) {
-        setTimeout(() => this.performNavigation(pathname, params, true), 0);
+        setTimeout(() => this.performNavigation(pathname, data, true), 0);
       } else {
-        this.performNavigation(pathname, params, true);
+        this.performNavigation(pathname, data, true);
       }
     }
   }
