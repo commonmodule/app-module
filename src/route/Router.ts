@@ -40,7 +40,7 @@ class Router {
     return this;
   }
 
-  private updateActiveViews(params: ViewParams | undefined) {
+  public updateActiveViews(params?: ViewParams) {
     for (const route of this.routes) {
       const openingView = this.activeViews.find((view) =>
         view instanceof route.View

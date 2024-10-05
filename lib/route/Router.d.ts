@@ -7,7 +7,7 @@ declare class Router {
     constructor();
     private openView;
     add(pathname: `/${string}`, View: ViewConstructor): this;
-    private updateActiveViews;
+    updateActiveViews(params?: ViewParams): void;
     private performNavigation;
     go(pathname: `/${string}`, params?: ViewParams): void;
     goWithoutHistory(pathname: `/${string}`, params?: ViewParams): void;
