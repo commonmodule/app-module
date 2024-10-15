@@ -240,4 +240,8 @@ export default class DomNode<
   public calculateRect(): DOMRect {
     return this.htmlElement.getBoundingClientRect();
   }
+
+  public clone(): DomNode<HE, ET> {
+    return new DomNode<HE, ET>(this.htmlElement.cloneNode(true) as HE);
+  }
 }

@@ -30,6 +30,7 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     onDom<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HE, event: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): this;
     offDom<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HE, event: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): this;
     calculateRect(): DOMRect;
+    clone(): DomNode<HE, ET>;
 }
 export {};
 //# sourceMappingURL=DomNode.d.ts.map
