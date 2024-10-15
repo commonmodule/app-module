@@ -8,6 +8,8 @@ if (!(window as any).URLPattern) {
 type ViewConstructor = new () => View<any>;
 
 class Router {
+  public prefix = "";
+
   private routes: { urlPattern: URLPattern; View: ViewConstructor }[] = [];
   private isViewOpening = false;
   private activeViews: View<any>[] = [];
@@ -30,7 +32,9 @@ class Router {
   }
 
   public add(pathname: `/${string}`, View: ViewConstructor) {
-    const urlPattern = new URLPattern({ pathname });
+    const urlPattern = new URLPattern({
+      pathname: `${this.prefix}${pathname}`,
+    });
     this.routes.push({ urlPattern, View });
 
     const params = urlPattern.exec({ pathname: location.pathname })?.pathname
@@ -72,14 +76,14 @@ class Router {
     replace: boolean,
   ) {
     replace
-      ? history.replaceState(undefined, "", pathname)
-      : history.pushState(undefined, "", pathname);
+      ? history.replaceState(undefined, "", `${this.prefix}${pathname}`)
+      : history.pushState(undefined, "", `${this.prefix}${pathname}`);
 
     this.updateActiveViews(data);
   }
 
   public go(pathname: `/${string}`, data?: any) {
-    if (location.pathname !== pathname) {
+    if (location.pathname !== `${this.prefix}${pathname}`) {
       if (this.isViewOpening) {
         setTimeout(() => this.performNavigation(pathname, data, false), 0);
       } else {
@@ -89,7 +93,7 @@ class Router {
   }
 
   public goWithoutHistory(pathname: `/${string}`, data?: any) {
-    if (location.pathname !== pathname) {
+    if (location.pathname !== `${this.prefix}${pathname}`) {
       if (this.isViewOpening) {
         setTimeout(() => this.performNavigation(pathname, data, true), 0);
       } else {

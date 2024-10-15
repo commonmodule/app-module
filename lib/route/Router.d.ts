@@ -1,6 +1,7 @@
 import View from "./View.js";
 type ViewConstructor = new () => View<any>;
 declare class Router {
+    prefix: string;
     private routes;
     private isViewOpening;
     private activeViews;
