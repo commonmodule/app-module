@@ -50,5 +50,7 @@ export default class WindowEventTreeNode<
       window.removeEventListener(type, listener, options)
     );
     this.listeners = [];
+
+    super.remove();
   }
 }
