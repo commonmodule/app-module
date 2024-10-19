@@ -1,2 +1,2 @@
-export default function msg(key: string): string;
+export default function msg(key: string, params?: Record<string, string | number>): string;
 //# sourceMappingURL=msg.d.ts.map
