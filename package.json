@@ -2,13 +2,13 @@
   "name": "@common-module/app",
   "author": "yj.gaia",
   "homepage": "https://yj.dev",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
   "dependencies": {
-    "@common-module/ts": "^0.1.0",
-    "@common-module/universal-page": "^0.1.0",
+    "@common-module/ts": "^0.1.2",
+    "@common-module/universal-page": "^0.1.2",
     "urlpattern-polyfill": "^10.0.0"
   },
   "devDependencies": {}
