@@ -15,12 +15,10 @@ class Router {
   private activeViews: View<any>[] = [];
 
   constructor() {
-    window.addEventListener("popstate", (event) => {
-      //TODO:
-      console.log(event);
-
-      this.updateActiveViews(event.state);
-    });
+    window.addEventListener(
+      "popstate",
+      (event) => this.updateActiveViews(event.state),
+    );
   }
 
   private openView(View: ViewConstructor, data: any) {
@@ -31,15 +29,19 @@ class Router {
     this.isViewOpening = false;
   }
 
-  public add(pathname: `/${string}`, View: ViewConstructor) {
-    const urlPattern = new URLPattern({
-      pathname: `${this.prefix}${pathname}`,
-    });
-    this.routes.push({ urlPattern, View });
+  public add(pathname: `/${string}` | `/${string}`[], View: ViewConstructor) {
+    const pathnames = Array.isArray(pathname) ? pathname : [pathname];
 
-    const params = urlPattern.exec({ pathname: location.pathname })?.pathname
-      .groups;
-    if (params) this.openView(View, params);
+    pathnames.forEach((path) => {
+      const urlPattern = new URLPattern({
+        pathname: `${this.prefix}${path}`,
+      });
+      this.routes.push({ urlPattern, View });
+
+      const params = urlPattern.exec({ pathname: location.pathname })?.pathname
+        .groups;
+      if (params) this.openView(View, params);
+    });
 
     return this;
   }
