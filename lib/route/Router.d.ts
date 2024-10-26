@@ -1,6 +1,9 @@
+import { EventContainer } from "@common-module/ts";
 import View from "./View.js";
 type ViewConstructor = new () => View<any>;
-declare class Router {
+declare class Router extends EventContainer<{
+    routeChanged: (pathname: `/${string}`, data: any) => void;
+}> {
     prefix: string;
     private routes;
     private isViewOpening;

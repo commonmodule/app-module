@@ -1,4 +1,4 @@
-import { ArrayUtils } from "@common-module/ts";
+import { ArrayUtils, EventContainer } from "@common-module/ts";
 import View from "./View.js";
 
 if (!(window as any).URLPattern) {
@@ -7,7 +7,9 @@ if (!(window as any).URLPattern) {
 
 type ViewConstructor = new () => View<any>;
 
-class Router {
+class Router extends EventContainer<{
+  routeChanged: (pathname: `/${string}`, data: any) => void;
+}> {
   public prefix = "";
 
   private routes: { urlPattern: URLPattern; View: ViewConstructor }[] = [];
@@ -15,6 +17,7 @@ class Router {
   private activeViews: View<any>[] = [];
 
   constructor() {
+    super();
     window.addEventListener(
       "popstate",
       (event) => this.updateActiveViews(event.state),
@@ -81,6 +84,7 @@ class Router {
       ? history.replaceState(undefined, "", `${this.prefix}${pathname}`)
       : history.pushState(undefined, "", `${this.prefix}${pathname}`);
 
+    this.emit("routeChanged", pathname, data);
     this.updateActiveViews(data);
   }
 
