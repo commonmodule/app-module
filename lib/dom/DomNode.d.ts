@@ -21,7 +21,6 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     private notifyVisibility;
     appendTo(parent: DomNode, index?: number): this;
     remove(): void;
-    empty(): this;
     set text(text: string | undefined);
     get text(): string;
     addClass(...classNames: string[]): this;

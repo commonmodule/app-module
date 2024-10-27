@@ -178,13 +178,6 @@ export default class DomNode<
     super.remove();
   }
 
-  public empty(): this {
-    while (this.children.length > 0) {
-      this.children[0].remove();
-    }
-    return this;
-  }
-
   public set text(text: string | undefined) {
     this.empty();
     if (text) this.appendText(text);
