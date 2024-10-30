@@ -1,5 +1,12 @@
-import { DomSelector, Tag } from "@common-module/universal-page";
 import WindowEventTreeNode from "./WindowEventTreeNode.js";
+
+type Tag = "" | keyof HTMLElementTagNameMap;
+
+export type DomSelector =
+  | Tag
+  | `${Tag}#${string}`
+  | `${Tag}.${string}`
+  | `${Tag}#${string}.${string}`;
 
 export type ElementOrSelector = HTMLElement | DomSelector;
 
