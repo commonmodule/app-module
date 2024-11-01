@@ -1,8 +1,9 @@
-import DomNode, {
-  DomChild,
+import {
   ElementOrSelector,
-  InferElementType
-} from "./DomNode.js";
+  InferElementType,
+  el as UniversalEl,
+} from "@common-module/universal-page";
+import DomNode, { DomChild } from "./DomNode.js";
 
 export default function el<EOS extends ElementOrSelector = HTMLElement>(
   elementOrSelector: EOS,
@@ -12,3 +13,5 @@ export default function el<EOS extends ElementOrSelector = HTMLElement>(
     InferElementType<EOS>
   >;
 }
+
+UniversalEl.impl = el;
