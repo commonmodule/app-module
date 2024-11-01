@@ -1,5 +1,5 @@
 export { default as BodyNode } from "./dom/BodyNode.js";
-export { default as DomNode } from "./dom/DomNode.js";
+export { default as DomNode, DomChild } from "./dom/DomNode.js";
 export { default as el } from "./dom/el.js";
 export { default as I18nMessageManager } from "./i18n/I18nMessageManager.js";
 export { default as msg } from "./i18n/msg.js";
