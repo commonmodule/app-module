@@ -1,7 +1,8 @@
 import {
-  ElementOrSelector,
-  InferElementType,
   el as UniversalEl,
+  ElementOrSelector,
+  html,
+  InferElementType,
 } from "@common-module/universal-page";
 import DomNode, { DomChild } from "./DomNode.js";
 
@@ -15,3 +16,9 @@ export default function el<EOS extends ElementOrSelector = HTMLElement>(
 }
 
 UniversalEl.impl = el;
+
+html.impl = (htmlContent: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, "text/html");
+  return new DomNode(doc.body.firstChild as HTMLElement);
+};
