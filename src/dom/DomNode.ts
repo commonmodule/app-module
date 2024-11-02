@@ -45,7 +45,7 @@ export default class DomNode<
   ) {
     super();
 
-    this.htmlElement = elementOrSelector instanceof HTMLElement
+    this.htmlElement = elementOrSelector instanceof Element
       ? elementOrSelector
       : createElementBySelector(elementOrSelector ?? "") as HE;
 
@@ -106,13 +106,10 @@ export default class DomNode<
     return this;
   }
 
-  private isVisible(): boolean {
-    let currentNode: DomNode | undefined = this;
-    while (currentNode !== undefined) {
-      if (currentNode.htmlElement === document.body) {
-        return true;
-      }
-      currentNode = currentNode.parent;
+  protected isVisible(): boolean {
+    if (this.parent) {
+      return this.parent.isVisible() ||
+        this.parent.htmlElement === document.body;
     }
     return false;
   }

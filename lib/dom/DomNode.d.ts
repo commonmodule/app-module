@@ -11,7 +11,7 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     private appendText;
     prepend(...children: DomChild<HE>[]): this;
     append(...children: DomChild<HE>[]): this;
-    private isVisible;
+    protected isVisible(): boolean;
     private notifyVisibility;
     appendTo(parent: DomNode, index?: number): this;
     remove(): void;

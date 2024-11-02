@@ -1,0 +1,1 @@
+{"version":3,"file":"QueriedDomNode.js","sourceRoot":"","sources":["../../src/dom/QueriedDomNode.ts"],"names":[],"mappings":"AAAA,OAAO,OAAO,MAAM,cAAc,CAAC;AAEnC,MAAM,CAAC,OAAO,OAAO,cAAe,SAAQ,OAAO;IACjD,YAAY,QAAgB;QAC1B,KAAK,CAAC,QAAQ,CAAC,aAAa,CAAC,QAAQ,CAAgB,CAAC,CAAC;IACzD,CAAC;IAES,SAAS;QACjB,OAAO,IAAI,CAAC;IACd,CAAC;CACF"}
