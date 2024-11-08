@@ -152,7 +152,7 @@ export default class DomNode<
   }
 
   public set text(text: string | undefined) {
-    this.empty();
+    this.clear();
     if (text) this.appendText(text);
   }
 
