@@ -86,6 +86,8 @@ class Router extends EventContainer<{
 
     this.emit("routeChanged", pathname, data);
     this.updateActiveViews(data);
+
+    window.scrollTo(0, 0);
   }
 
   public go(pathname: `/${string}`, data?: any) {
