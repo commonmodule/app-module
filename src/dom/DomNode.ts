@@ -138,6 +138,12 @@ export default class DomNode<
     return this;
   }
 
+  public clear() {
+    super.clear();
+    this.htmlElement.innerHTML = "";
+    return this;
+  }
+
   public remove() {
     if (this.removed) return;
 
