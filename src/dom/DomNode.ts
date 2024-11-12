@@ -140,7 +140,7 @@ export default class DomNode<
 
   public clear(...except: (DomNode | undefined)[]) {
     super.clear(...except);
-    this.htmlElement.innerHTML = "";
+    if (this.children.length === 0) this.htmlElement.innerHTML = "";
     return this;
   }
 
