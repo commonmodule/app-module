@@ -171,6 +171,10 @@ export default class DomNode<
     return this;
   }
 
+  public hasClass(className: string): boolean {
+    return this.htmlElement.classList.contains(className);
+  }
+
   public removeClass(...classNames: string[]): this {
     this.htmlElement.classList.remove(...classNames);
     return this;

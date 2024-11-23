@@ -19,6 +19,7 @@ export default class DomNode<HE extends HTMLElement = HTMLElement, ET extends Re
     set text(text: string | undefined);
     get text(): string;
     addClass(...classNames: string[]): this;
+    hasClass(className: string): boolean;
     removeClass(...classNames: string[]): this;
     style<T extends Partial<CSSStyleDeclaration> | string>(styles: T): T extends string ? string : this;
     onDom<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HE, event: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): this;
