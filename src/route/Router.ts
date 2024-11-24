@@ -12,7 +12,7 @@ class Router extends EventContainer<{
 }> {
   public prefix = "";
 
-  private routes: { urlPattern: URLPattern; View: ViewConstructor }[] = [];
+  private routes: { urlPatterns: URLPattern[]; View: ViewConstructor }[] = [];
   private isViewOpening = false;
   private activeViews: View<any>[] = [];
 
@@ -35,16 +35,17 @@ class Router extends EventContainer<{
   public add(pathname: `/${string}` | `/${string}`[], View: ViewConstructor) {
     const pathnames = Array.isArray(pathname) ? pathname : [pathname];
 
-    pathnames.forEach((path) => {
-      const urlPattern = new URLPattern({
-        pathname: `${this.prefix}${path}`,
-      });
-      this.routes.push({ urlPattern, View });
+    const urlPatterns = pathnames.map((path) =>
+      new URLPattern({ pathname: `${this.prefix}${path}` })
+    );
 
-      const params = urlPattern.exec({ pathname: location.pathname })?.pathname
-        .groups;
-      if (params) this.openView(View, params);
-    });
+    this.routes.push({ urlPatterns, View });
+
+    const params = urlPatterns.find((pattern) =>
+      pattern.test({ pathname: location.pathname })
+    )?.exec({ pathname: location.pathname })?.pathname.groups;
+
+    if (params) this.openView(View, params);
 
     return this;
   }
@@ -55,14 +56,16 @@ class Router extends EventContainer<{
         view instanceof route.View
       );
 
-      const urlPatternParams = route.urlPattern.exec({
-        pathname: location.pathname,
-      })?.pathname.groups;
+      const urlPatternParams = route.urlPatterns.find((pattern) =>
+        pattern.test({ pathname: location.pathname })
+      )?.exec({ pathname: location.pathname })?.pathname.groups;
 
       if (urlPatternParams) {
         if (data) Object.assign(data, urlPatternParams);
         else data = urlPatternParams;
       }
+
+      delete data?.["0"];
 
       if (urlPatternParams) {
         openingView
