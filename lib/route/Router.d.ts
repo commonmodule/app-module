@@ -10,7 +10,7 @@ declare class Router extends EventContainer<{
     private activeViews;
     constructor();
     private openView;
-    add(pathname: `/${string}` | `/${string}`[], View: ViewConstructor): this;
+    add(pathname: `/${string}` | `/${string}`[], View: ViewConstructor, exclude?: `/${string}` | `/${string}`[]): this;
     updateActiveViews(data?: any): void;
     private performNavigation;
     go(pathname: `/${string}`, data?: any): void;

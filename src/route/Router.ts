@@ -12,7 +12,12 @@ class Router extends EventContainer<{
 }> {
   public prefix = "";
 
-  private routes: { urlPatterns: URLPattern[]; View: ViewConstructor }[] = [];
+  private routes: {
+    urlPatterns: URLPattern[];
+    excludePatterns: URLPattern[];
+    View: ViewConstructor;
+  }[] = [];
+
   private isViewOpening = false;
   private activeViews: View<any>[] = [];
 
@@ -32,20 +37,36 @@ class Router extends EventContainer<{
     this.isViewOpening = false;
   }
 
-  public add(pathname: `/${string}` | `/${string}`[], View: ViewConstructor) {
+  public add(
+    pathname: `/${string}` | `/${string}`[],
+    View: ViewConstructor,
+    exclude?: `/${string}` | `/${string}`[],
+  ) {
     const pathnames = Array.isArray(pathname) ? pathname : [pathname];
 
     const urlPatterns = pathnames.map((path) =>
       new URLPattern({ pathname: `${this.prefix}${path}` })
     );
 
-    this.routes.push({ urlPatterns, View });
+    const excludePatterns = Array.isArray(exclude)
+      ? exclude.map((path) =>
+        new URLPattern({ pathname: `${this.prefix}${path}` })
+      )
+      : [];
 
-    const params = urlPatterns.find((pattern) =>
+    this.routes.push({ urlPatterns, excludePatterns, View });
+
+    const urlPatternParams = urlPatterns.find((pattern) =>
       pattern.test({ pathname: location.pathname })
     )?.exec({ pathname: location.pathname })?.pathname.groups;
 
-    if (params) this.openView(View, params);
+    const excludePatternParams = excludePatterns.find((pattern) =>
+      pattern.test({ pathname: location.pathname })
+    )?.exec({ pathname: location.pathname })?.pathname.groups;
+
+    if (urlPatternParams && !excludePatternParams) {
+      this.openView(View, urlPatternParams);
+    }
 
     return this;
   }
@@ -60,6 +81,10 @@ class Router extends EventContainer<{
         pattern.test({ pathname: location.pathname })
       )?.exec({ pathname: location.pathname })?.pathname.groups;
 
+      const excludePatternParams = route.excludePatterns.find((pattern) =>
+        pattern.test({ pathname: location.pathname })
+      )?.exec({ pathname: location.pathname })?.pathname.groups;
+
       if (urlPatternParams) {
         if (data) Object.assign(data, urlPatternParams);
         else data = urlPatternParams;
@@ -67,7 +92,7 @@ class Router extends EventContainer<{
 
       delete data?.["0"];
 
-      if (urlPatternParams) {
+      if (urlPatternParams && !excludePatternParams) {
         openingView
           ? openingView.changeData(data)
           : this.openView(route.View, data);
