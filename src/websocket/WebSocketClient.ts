@@ -1,12 +1,11 @@
-import { EventContainer } from "@common-module/ts";
-import RealtimeClinet from "./RealtimeClient.js";
+import { EventContainer, RealtimeClient } from "@common-module/ts";
 
 export default class WebSocketClient extends EventContainer<{
   connect: () => void;
-  receive: (message: string) => void;
   disconnect: () => void;
-}> implements RealtimeClinet {
+}> implements RealtimeClient {
   private socket: WebSocket | undefined;
+  private messageHandlers: Array<(message: string) => void> = [];
 
   public isConnected(): boolean {
     return this.socket !== undefined;
@@ -26,7 +25,9 @@ export default class WebSocketClient extends EventContainer<{
     };
 
     socket.onmessage = (event) => {
-      this.emit("receive", event.data);
+      for (const handler of this.messageHandlers) {
+        handler(event.data);
+      }
     };
 
     socket.onclose = () => {
@@ -39,5 +40,9 @@ export default class WebSocketClient extends EventContainer<{
   public send(data: string): void {
     if (!this.socket) throw new Error("Socket is not connected");
     this.socket.send(data);
+  }
+
+  public onMessage(handler: (message: string) => void): void {
+    this.messageHandlers.push(handler);
   }
 }
