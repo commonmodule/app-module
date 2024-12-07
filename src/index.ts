@@ -12,3 +12,4 @@ export { default as BrowserInfo } from "./utils/BrowserInfo.js";
 export { default as DomUtils } from "./utils/DomUtils.js";
 export { default as ImageOptimizer } from "./utils/ImageOptimizer.js";
 export { default as StyleUtils } from "./utils/StyleUtils.js";
+export { default as WebSocketClient } from "./communication/WebSocketClient.js";

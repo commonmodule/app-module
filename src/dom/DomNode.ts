@@ -31,23 +31,23 @@ function createElementBySelector<S extends DomSelector>(
 }
 
 export default class DomNode<
-  HE extends HTMLElement = HTMLElement,
-  ET extends Record<string, (...args: any[]) => any> = {},
+  H extends HTMLElement = HTMLElement,
+  E extends Record<string, (...args: any[]) => any> = {},
 > extends WindowEventTreeNode<
   DomNode,
-  ET & { visible: () => void; remove: () => void }
+  E & { visible: () => void; remove: () => void }
 > {
-  public htmlElement: HE;
+  public htmlElement: H;
 
   constructor(
-    elementOrSelector?: HE | DomSelector,
-    ...children: DomChild<HE>[]
+    elementOrSelector?: H | DomSelector,
+    ...children: DomChild<H>[]
   ) {
     super();
 
     this.htmlElement = elementOrSelector instanceof Element
       ? elementOrSelector
-      : createElementBySelector(elementOrSelector ?? "") as HE;
+      : createElementBySelector(elementOrSelector ?? "") as H;
 
     this.append(...children);
   }
@@ -80,7 +80,7 @@ export default class DomNode<
     return this;
   }
 
-  public prepend(...children: DomChild<HE>[]): this {
+  public prepend(...children: DomChild<H>[]): this {
     for (const child of children) {
       if (child === undefined) continue;
       else if (child instanceof DomNode) child.appendTo(this, 0);
@@ -93,7 +93,7 @@ export default class DomNode<
     return this;
   }
 
-  public append(...children: DomChild<HE>[]): this {
+  public append(...children: DomChild<H>[]): this {
     for (const child of children) {
       if (child === undefined) continue;
       else if (child instanceof DomNode) child.appendTo(this);
@@ -117,7 +117,7 @@ export default class DomNode<
   private notifyVisibility() {
     this.emit(
       "visible",
-      ...([] as Parameters<(ET & { visible: () => void })["visible"]>),
+      ...([] as Parameters<(E & { visible: () => void })["visible"]>),
     );
 
     this.children.forEach((child) => child.notifyVisibility());
@@ -149,7 +149,7 @@ export default class DomNode<
 
     this.emit(
       "remove",
-      ...([] as Parameters<(ET & { remove: () => void })["remove"]>),
+      ...([] as Parameters<(E & { remove: () => void })["remove"]>),
     );
 
     this.htmlElement.remove();
@@ -195,7 +195,7 @@ export default class DomNode<
 
   public onDom<K extends keyof HTMLElementEventMap>(
     type: K,
-    listener: (this: HE, event: HTMLElementEventMap[K]) => any,
+    listener: (this: H, event: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions,
   ): this {
     this.htmlElement.addEventListener(type, listener as EventListener, options);
@@ -204,7 +204,7 @@ export default class DomNode<
 
   public offDom<K extends keyof HTMLElementEventMap>(
     type: K,
-    listener: (this: HE, event: HTMLElementEventMap[K]) => any,
+    listener: (this: H, event: HTMLElementEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
   ): this {
     this.htmlElement.removeEventListener(
@@ -219,7 +219,7 @@ export default class DomNode<
     return this.htmlElement.getBoundingClientRect();
   }
 
-  public clone(): DomNode<HE, ET> {
-    return new DomNode<HE, ET>(this.htmlElement.cloneNode(true) as HE);
+  public clone(): DomNode<H, E> {
+    return new DomNode<H, E>(this.htmlElement.cloneNode(true) as H);
   }
 }
