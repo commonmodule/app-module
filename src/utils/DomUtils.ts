@@ -8,7 +8,7 @@ class DomUtils {
     dom: DomNode,
     handler: (event: MouseEvent) => void,
   ) {
-    if (BrowserInfo.isIOS) {
+    if (BrowserInfo.isIOS()) {
       this.simulateContextMenuOnIOS(dom, handler);
     } else {
       dom.onDom("contextmenu", (event: MouseEvent) => {
