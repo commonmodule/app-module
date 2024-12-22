@@ -3,21 +3,32 @@ import Store from "../store/Store.js";
 class BrowserInfo {
   private _isAndroid: boolean | undefined;
   private _isIOS: boolean | undefined;
+  private _isPageVisible: boolean = !document.hidden;
 
   private store = new Store("browser-info");
 
-  public get isAndroid() {
+  constructor() {
+    document.addEventListener("visibilitychange", () => {
+      this._isPageVisible = !document.hidden;
+    });
+  }
+
+  public isAndroid() {
     return this._isAndroid ??
       (this._isAndroid = /Android/i.test(navigator.userAgent));
   }
 
-  public get isIOS() {
+  public isIOS() {
     return this._isIOS ??
       (this._isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent));
   }
 
-  public get isMobileDevice() {
-    return this.isAndroid || this.isIOS;
+  public isMobileDevice() {
+    return this.isAndroid() || this.isIOS();
+  }
+
+  public isPageVisible() {
+    return this._isPageVisible;
   }
 
   private normalizeLanguageCode(lang: string): string {

@@ -1,10 +1,13 @@
 declare class BrowserInfo {
     private _isAndroid;
     private _isIOS;
+    private _isPageVisible;
     private store;
-    get isAndroid(): boolean;
-    get isIOS(): boolean;
-    get isMobileDevice(): boolean;
+    constructor();
+    isAndroid(): boolean;
+    isIOS(): boolean;
+    isMobileDevice(): boolean;
+    isPageVisible(): boolean;
     private normalizeLanguageCode;
     get languageCode(): string;
     set languageCode(lang: string);
