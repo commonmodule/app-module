@@ -31,12 +31,26 @@ class I18nMessageManager {
   }
 
   public getMessage(language: string, key: string): string {
-    const message = this.messages[language]?.[key];
-    if (message === undefined) {
-      console.error(`message "${key}" not exists.`);
+    const path = key.split(".");
+    let current: any = this.messages[language];
+    if (!current) {
+      console.error(`Language "${language}" not exists.`);
       return "";
     }
-    return message;
+    for (const segment of path) {
+      if (current[segment] === undefined) {
+        console.error(
+          `Message key "${key}" not exists in language "${language}".`,
+        );
+        return "";
+      }
+      current = current[segment];
+    }
+    if (typeof current !== "string") {
+      console.error(`The value for "${key}" is not a string.`);
+      return "";
+    }
+    return current;
   }
 }
 
