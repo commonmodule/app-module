@@ -31,6 +31,10 @@ class BrowserInfo {
     return this._isPageVisible;
   }
 
+  public hasPageFocus() {
+    return document.hasFocus();
+  }
+
   private normalizeLanguageCode(lang: string): string {
     const [mainLang, region] = lang.toLowerCase().split("-");
     if (mainLang === "zh") {
