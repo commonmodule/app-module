@@ -3,6 +3,21 @@ import { JsonUtils, KebabCase, StringUtils } from "@common-module/ts";
 export default class Store<NT extends string> {
   private readonly prefix: string;
 
+  private static getStorage(permanent: boolean): Storage {
+    return permanent ? localStorage : sessionStorage;
+  }
+
+  public static isStorageAvailable() {
+    try {
+      const testKey = "__test__";
+      sessionStorage.setItem(testKey, "test");
+      sessionStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   constructor(name: KebabCase<NT>) {
     if (!StringUtils.isKebabCase(name)) {
       throw new Error(
@@ -10,10 +25,6 @@ export default class Store<NT extends string> {
       );
     }
     this.prefix = `${name}/`;
-  }
-
-  private getStorage(permanent: boolean): Storage {
-    return permanent ? localStorage : sessionStorage;
   }
 
   private getFullKey(key: string): string {
@@ -30,7 +41,7 @@ export default class Store<NT extends string> {
   }
 
   private setValue<T>(key: string, value: T, permanent: boolean): void {
-    const storage = this.getStorage(permanent);
+    const storage = Store.getStorage(permanent);
     const fullKey = this.getFullKey(key);
 
     try {
