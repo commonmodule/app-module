@@ -6,7 +6,6 @@ class FontLoader extends ResourceLoader<boolean> {
       if ("fonts" in document) {
         await document.fonts.load(`1em ${fontName}`);
         await document.fonts.ready;
-        return true;
       } else {
         const span = window.document.createElement("span");
         span.style.fontFamily = "sans-serif";
@@ -29,6 +28,9 @@ class FontLoader extends ResourceLoader<boolean> {
           }, 100);
         });
       }
+
+      this.pendingLoads.delete(fontName);
+      return true;
     })();
 
     this.pendingLoads.set(fontName, loadPromise);
