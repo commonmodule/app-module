@@ -1,6 +1,6 @@
-import { JsonUtils, KebabCase, StringUtils } from "@common-module/ts";
+import { JsonUtils, StringUtils } from "@common-module/ts";
 
-export default class Store<NT extends string> {
+export default class Store {
   private readonly prefix: string;
 
   private static getStorage(permanent: boolean): Storage {
@@ -18,7 +18,7 @@ export default class Store<NT extends string> {
     }
   }
 
-  constructor(name: KebabCase<NT>) {
+  constructor(name: string) {
     if (!StringUtils.isKebabCase(name)) {
       throw new Error(
         "Name must be in kebab-case format (lowercase and hyphens only).",

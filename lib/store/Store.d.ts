@@ -1,9 +1,8 @@
-import { KebabCase } from "@common-module/ts";
-export default class Store<NT extends string> {
+export default class Store {
     private readonly prefix;
     private static getStorage;
     static isStorageAvailable(): boolean;
-    constructor(name: KebabCase<NT>);
+    constructor(name: string);
     private getFullKey;
     private static isQuotaExceededError;
     private setValue;
