@@ -9,6 +9,7 @@ declare class BrowserInfo {
     isMobileDevice(): boolean;
     isPageVisible(): boolean;
     hasPageFocus(): boolean;
+    isDarkMode(): boolean;
     private normalizeLanguageCode;
     get languageCode(): string;
     set languageCode(lang: string);

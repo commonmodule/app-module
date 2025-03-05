@@ -35,6 +35,10 @@ class BrowserInfo {
     return document.hasFocus();
   }
 
+  public isDarkMode() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
   private normalizeLanguageCode(lang: string): string {
     const [mainLang, region] = lang.toLowerCase().split("-");
     if (mainLang === "zh") {
