@@ -1,5 +1,5 @@
 import Store from "../store/Store.js";
-import BrowserInfo from "../utils/BrowserInfo.js";
+import Browser from "../utils/Browser.js";
 import Theme from "./Theme.js";
 
 class ThemeManager {
@@ -22,7 +22,7 @@ class ThemeManager {
   public getShowingTheme() {
     const theme = this.theme;
     return theme === Theme.Auto
-      ? (BrowserInfo.isDarkMode() === true ? Theme.Dark : Theme.Light)
+      ? (Browser.isDarkMode() === true ? Theme.Dark : Theme.Light)
       : theme;
   }
 

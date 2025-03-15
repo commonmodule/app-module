@@ -1,3 +1,4 @@
+import DomNode from "../dom/DomNode.js";
 declare class Browser {
     private _isAndroid;
     private _isIOS;
@@ -17,7 +18,10 @@ declare class Browser {
         title: string;
         url: string;
     }): Promise<void>;
+    enterFullscreen(domNode: DomNode): void;
+    isFullscreen(): boolean;
+    exitFullscreen(): void;
 }
 declare const _default: Browser;
 export default _default;
-//# sourceMappingURL=BrowserInfo.d.ts.map
+//# sourceMappingURL=Browser.d.ts.map

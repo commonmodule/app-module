@@ -1,6 +1,7 @@
+import DomNode from "../dom/DomNode.js";
 import Store from "../store/Store.js";
 
-class BrowserInfo {
+class Browser {
   private _isAndroid: boolean | undefined;
   private _isIOS: boolean | undefined;
   private _isPageVisible: boolean = !document.hidden;
@@ -77,6 +78,18 @@ class BrowserInfo {
       }
     }
   }
+
+  public enterFullscreen(domNode: DomNode) {
+    domNode.htmlElement.requestFullscreen();
+  }
+
+  public isFullscreen() {
+    return Boolean(document.fullscreenElement);
+  }
+
+  public exitFullscreen() {
+    document.exitFullscreen();
+  }
 }
 
-export default new BrowserInfo();
+export default new Browser();

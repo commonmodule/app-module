@@ -1,5 +1,5 @@
 import DomNode from "../dom/DomNode.js";
-import BrowserInfo from "./BrowserInfo.js";
+import Browser from "./Browser.js";
 
 const LONG_PRESS_DURATION = 500;
 
@@ -8,7 +8,7 @@ class DomUtils {
     dom: DomNode,
     handler: (event: MouseEvent) => void,
   ) {
-    if (BrowserInfo.isIOS()) {
+    if (Browser.isIOS()) {
       this.simulateContextMenuOnIOS(dom, handler);
     } else {
       dom.onDom("contextmenu", (event: MouseEvent) => {
