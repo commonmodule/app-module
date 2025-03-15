@@ -13,6 +13,10 @@ declare class BrowserInfo {
     private normalizeLanguageCode;
     get languageCode(): string;
     set languageCode(lang: string);
+    share(data: {
+        title: string;
+        url: string;
+    }): Promise<void>;
 }
 declare const _default: BrowserInfo;
 export default _default;

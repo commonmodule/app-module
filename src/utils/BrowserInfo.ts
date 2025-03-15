@@ -59,6 +59,24 @@ class BrowserInfo {
   public set languageCode(lang: string) {
     this.store.setPermanent("lang", this.normalizeLanguageCode(lang));
   }
+
+  public async share(data: { title: string; url: string }) {
+    if (navigator.share) {
+      try {
+        await navigator.share(data);
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(data.url);
+        alert("Link copied to clipboard.");
+      } catch (error) {
+        console.error("Error copying to clipboard:", error);
+        alert("Sharing not supported on this browser.");
+      }
+    }
+  }
 }
 
 export default new BrowserInfo();
