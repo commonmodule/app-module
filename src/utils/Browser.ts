@@ -79,6 +79,21 @@ class Browser {
     }
   }
 
+  public async download(url: string) {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = url;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(objectUrl);
+  }
+
   public enterFullscreen(domNode: DomNode) {
     domNode.htmlElement.requestFullscreen();
   }

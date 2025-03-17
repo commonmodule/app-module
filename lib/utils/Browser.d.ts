@@ -18,6 +18,7 @@ declare class Browser {
         title: string;
         url: string;
     }): Promise<void>;
+    download(url: string): Promise<void>;
     enterFullscreen(domNode: DomNode): void;
     isFullscreen(): boolean;
     exitFullscreen(): void;
