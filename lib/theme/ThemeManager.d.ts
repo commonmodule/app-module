@@ -1,7 +1,7 @@
 import Theme from "./Theme.js";
 declare class ThemeManager {
     private store;
-    constructor();
+    init(): void;
     get theme(): Theme;
     set theme(theme: Theme);
     getShowingTheme(): Theme.Dark | Theme.Light;

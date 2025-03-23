@@ -5,7 +5,7 @@ import Theme from "./Theme.js";
 class ThemeManager {
   private store = new Store("theme-manager");
 
-  constructor() {
+  public init() {
     this.theme = this.theme;
   }
 
