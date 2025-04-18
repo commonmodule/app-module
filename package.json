@@ -1,13 +1,14 @@
 {
-  "name": "@common-module/app",
+  "name": "@commonmodule/app",
   "author": "yj.gaia",
   "homepage": "https://personas.gaia.cc/yj.gaia",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
   "dependencies": {
-    "@common-module/universal-page": "^0.1.10",
+    "@commonmodule/ts": "^0.1.9",
+    "@commonmodule/universal-page": "^0.1.11",
     "urlpattern-polyfill": "^10.0.0"
   },
   "devDependencies": {}

@@ -1,4 +1,4 @@
-import { EventContainer } from "@common-module/ts";
+import { EventContainer } from "@commonmodule/ts";
 import Store from "./Store.js";
 
 export default class AuthTokenManager<

@@ -1,1 +1,0 @@
-{"version":3,"file":"ChannelClient.js","sourceRoot":"","sources":["../../src/communication/ChannelClient.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,mBAAmB,CAAC;AAQnD,MAAM,CAAC,OAAO,OAAgB,aAAc,SAAQ,cAGlD;IAGU,YAAY,CAAI,UAAkB;QAC1C,MAAM,OAAO,GAAe,IAAI,CAAC,KAAK,CAAC,UAAU,CAAC,CAAC;IACrD,CAAC;CACF"}

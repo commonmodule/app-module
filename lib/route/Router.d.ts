@@ -1,4 +1,4 @@
-import { EventContainer } from "@common-module/ts";
+import { EventContainer } from "@commonmodule/ts";
 import View from "./View.js";
 type ViewConstructor = new () => View<any>;
 declare class Router extends EventContainer<{

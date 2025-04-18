@@ -1,4 +1,4 @@
-import { ResourceLoader } from "@common-module/ts";
+import { ResourceLoader } from "@commonmodule/ts";
 
 class FontLoader extends ResourceLoader<boolean> {
   protected async loadResource(fontName: string): Promise<boolean | undefined> {

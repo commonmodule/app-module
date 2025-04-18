@@ -3,7 +3,7 @@ import {
   ElementOrSelector,
   html,
   InferElementType,
-} from "@common-module/universal-page";
+} from "@commonmodule/universal-page";
 import DomNode, { DomChild } from "./DomNode.js";
 
 export default function el<EOS extends ElementOrSelector = HTMLElement>(

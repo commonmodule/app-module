@@ -1,4 +1,4 @@
-import { EventContainer, RealtimeClient } from "@common-module/ts";
+import { EventContainer, RealtimeClient } from "@commonmodule/ts";
 export default class WebSocketClient extends EventContainer<{
     connect: () => void;
     disconnect: () => void;

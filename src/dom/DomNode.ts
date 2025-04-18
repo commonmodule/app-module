@@ -3,7 +3,7 @@ import {
   ElementOrSelector,
   ElementProperties,
   InferElementType,
-} from "@common-module/universal-page";
+} from "@commonmodule/universal-page";
 import WindowEventTreeNode from "./WindowEventTreeNode.js";
 
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =

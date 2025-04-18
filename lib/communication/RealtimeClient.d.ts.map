@@ -1,1 +1,0 @@
-{"version":3,"file":"RealtimeClient.d.ts","sourceRoot":"","sources":["../../src/communication/RealtimeClient.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,WAAW,cAAc;IACrC,IAAI,CAAC,OAAO,EAAE,MAAM,GAAG,IAAI,CAAC;IAC5B,EAAE,CAAC,SAAS,EAAE,SAAS,EAAE,QAAQ,EAAE,CAAC,OAAO,EAAE,MAAM,KAAK,IAAI,GAAG,IAAI,CAAC;CACrE"}

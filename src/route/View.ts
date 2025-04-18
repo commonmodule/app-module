@@ -1,4 +1,4 @@
-import { EventContainer } from "@common-module/ts";
+import { EventContainer } from "@commonmodule/ts";
 import DomNode from "../dom/DomNode.js";
 
 export default abstract class View<DT = {}, CT extends DomNode = DomNode> {

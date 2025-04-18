@@ -1,4 +1,4 @@
-import { ArrayUtils, EventContainer } from "@common-module/ts";
+import { ArrayUtils, EventContainer } from "@commonmodule/ts";
 import View from "./View.js";
 
 if (!(window as any).URLPattern) {
