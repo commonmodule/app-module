@@ -33,10 +33,7 @@ function createElementBySelector<S extends DomSelector>(
 export default class DomNode<
   H extends HTMLElement = HTMLElement,
   E extends Record<string, (...args: any[]) => any> = {},
-> extends WindowEventTreeNode<
-  DomNode,
-  E & { visible: () => void; remove: () => void }
-> {
+> extends WindowEventTreeNode<DomNode, E & { visible: () => void }> {
   public htmlElement: H;
 
   constructor(
@@ -146,14 +143,7 @@ export default class DomNode<
 
   public remove() {
     if (this.removed) return;
-
-    this.emit(
-      "remove",
-      ...([] as Parameters<(E & { remove: () => void })["remove"]>),
-    );
-
     this.htmlElement.remove();
-
     super.remove();
   }
 

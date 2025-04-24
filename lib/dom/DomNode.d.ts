@@ -3,7 +3,6 @@ import WindowEventTreeNode from "./WindowEventTreeNode.js";
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = DomNode | ElementProperties<InferElementType<EOS>> | string | undefined;
 export default class DomNode<H extends HTMLElement = HTMLElement, E extends Record<string, (...args: any[]) => any> = {}> extends WindowEventTreeNode<DomNode, E & {
     visible: () => void;
-    remove: () => void;
 }> {
     htmlElement: H;
     constructor(elementOrSelector?: H | DomSelector, ...children: DomChild<H>[]);
