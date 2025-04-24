@@ -1,8 +1,8 @@
-import { EventTreeNode } from "@commonmodule/ts";
+import { EventRecord, EventTreeNode } from "@commonmodule/ts";
 
 export default class WindowEventTreeNode<
   T extends EventTreeNode<T, E>,
-  E extends Record<string, (...args: any[]) => any>,
+  E extends EventRecord,
 > extends EventTreeNode<T, E> {
   private listeners: Array<{
     type: keyof WindowEventMap;

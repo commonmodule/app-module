@@ -1,3 +1,4 @@
+import { EventRecord } from "@commonmodule/ts";
 import {
   DomSelector,
   ElementOrSelector,
@@ -32,7 +33,7 @@ function createElementBySelector<S extends DomSelector>(
 
 export default class DomNode<
   H extends HTMLElement = HTMLElement,
-  E extends Record<string, (...args: any[]) => any> = {},
+  E extends EventRecord = EventRecord,
 > extends WindowEventTreeNode<DomNode, E & { visible: () => void }> {
   public htmlElement: H;
 

@@ -1,7 +1,8 @@
+import { EventRecord } from "@commonmodule/ts";
 import { DomSelector, ElementOrSelector, ElementProperties, InferElementType } from "@commonmodule/universal-page";
 import WindowEventTreeNode from "./WindowEventTreeNode.js";
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = DomNode | ElementProperties<InferElementType<EOS>> | string | undefined;
-export default class DomNode<H extends HTMLElement = HTMLElement, E extends Record<string, (...args: any[]) => any> = {}> extends WindowEventTreeNode<DomNode, E & {
+export default class DomNode<H extends HTMLElement = HTMLElement, E extends EventRecord = EventRecord> extends WindowEventTreeNode<DomNode, E & {
     visible: () => void;
 }> {
     htmlElement: H;

@@ -1,4 +1,4 @@
-import { EventContainer } from "@commonmodule/ts";
+import { EventContainer, EventRecord } from "@commonmodule/ts";
 import DomNode from "../dom/DomNode.js";
 
 export default abstract class View<DT = {}, CT extends DomNode = DomNode> {
@@ -11,7 +11,7 @@ export default abstract class View<DT = {}, CT extends DomNode = DomNode> {
 
   protected addViewManagedEvent<
     T extends EventContainer<E>,
-    E extends Record<string, (...args: any[]) => any>,
+    E extends EventRecord,
     K extends keyof E,
   >(
     target: T,
