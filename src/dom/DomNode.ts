@@ -33,7 +33,7 @@ function createElementBySelector<S extends DomSelector>(
 
 export default class DomNode<
   H extends HTMLElement = HTMLElement,
-  E extends EventRecord = EventRecord,
+  E extends EventRecord = {},
 > extends WindowEventTreeNode<DomNode, E & { visible: () => void }> {
   public htmlElement: H;
 

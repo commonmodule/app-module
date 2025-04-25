@@ -36,10 +36,6 @@ class FontLoader extends ResourceLoader<boolean> {
     this.pendingLoads.set(fontName, loadPromise);
     return await loadPromise;
   }
-
-  protected cleanup(_: boolean): void {
-    // No cleanup necessary for font
-  }
 }
 
 export default new FontLoader();
