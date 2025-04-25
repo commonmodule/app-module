@@ -49,7 +49,7 @@ export default class WindowEventTreeNode<
     this.listeners.forEach(({ type, listener, options }) =>
       window.removeEventListener(type, listener, options)
     );
-    this.listeners = [];
+    delete (this as any).listeners;
 
     super.remove();
   }

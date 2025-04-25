@@ -2,12 +2,12 @@
   "name": "@commonmodule/app",
   "author": "yj.gaia",
   "homepage": "https://personas.gaia.cc/yj.gaia",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "type": "module",
   "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
   "dependencies": {
-    "@commonmodule/ts": "^0.2.4",
+    "@commonmodule/ts": "^0.2.5",
     "@commonmodule/universal-page": "^0.1.11",
     "urlpattern-polyfill": "^10.0.0"
   },
