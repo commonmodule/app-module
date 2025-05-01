@@ -206,7 +206,7 @@ export default function el<EOS extends ElementOrSelector>(
 - Returns a `DomNode`.
 
 There’s also an `html` helper in
-[`@commonmodule/universal-page`](https://github.com/…), which gets its `impl`
+[`@commonmodule/universal-page`](https://github.com/commonmodule/universal-page-module), which gets its `impl`
 set here. It can parse an HTML string, take the first node from it, and wrap it
 in a `DomNode`.
 
