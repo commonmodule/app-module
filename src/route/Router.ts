@@ -52,7 +52,7 @@ class Router extends EventContainer<{
       ? exclude.map((path) =>
         new URLPattern({ pathname: `${this.prefix}${path}` })
       )
-      : [];
+      : [new URLPattern({ pathname: `${this.prefix}${exclude}` })];
 
     this.routes.push({ urlPatterns, excludePatterns, View });
 
