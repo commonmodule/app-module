@@ -40,6 +40,6 @@ export default abstract class View<DT = {}, CT extends DomNode = DomNode> {
 
   public close(): void {
     this.removeAllEvents();
-    this.container.remove();
+    this.container?.remove();
   }
 }
