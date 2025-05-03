@@ -1,0 +1,1 @@
+{"version":3,"file":"AudioContextManager.d.ts","sourceRoot":"","sources":["../../src/sound/AudioContextManager.ts"],"names":[],"mappings":"AAQA,cAAM,mBAAmB;IAChB,UAAU,IAAI,OAAO;IAIrB,eAAe,IAAI,YAAY;IAIzB,wBAAwB,IAAI,OAAO,CAAC,YAAY,CAAC;CAM/D;;AAED,wBAAyC"}
