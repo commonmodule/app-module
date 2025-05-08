@@ -1,9 +1,11 @@
 import { EventContainer, EventHandlers } from "@commonmodule/ts";
-import DomNode from "../dom/DomNode.js";
+import Dom from "../dom/Dom.js";
 
-export default abstract class View<DT = {}, CT extends DomNode = DomNode> {
-  private eventListeners: Map<EventContainer<any>, Map<string, EventListener>> =
-    new Map();
+export default abstract class View<DT = {}, CT extends Dom = Dom> {
+  private eventListeners: Map<
+    EventContainer<EventHandlers>,
+    Map<string, (...args: any[]) => any>
+  > = new Map();
 
   protected container!: CT;
 

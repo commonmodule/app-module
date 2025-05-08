@@ -1,4 +1,4 @@
-import DomNode from "../dom/DomNode.js";
+import Dom from "../dom/Dom.js";
 import Store from "../store/Store.js";
 
 class Browser {
@@ -94,8 +94,8 @@ class Browser {
     URL.revokeObjectURL(objectUrl);
   }
 
-  public enterFullscreen(domNode: DomNode) {
-    domNode.htmlElement.requestFullscreen();
+  public enterFullscreen(dom: Dom) {
+    dom.htmlElement.requestFullscreen();
   }
 
   public isFullscreen() {

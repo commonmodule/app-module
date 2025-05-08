@@ -1,17 +1,17 @@
-import DomNode from "../dom/DomNode.js";
+import Dom from "../dom/Dom.js";
 import Browser from "./Browser.js";
 
 const LONG_PRESS_DURATION = 500;
 
 class DomUtils {
   public enhanceWithContextMenu(
-    dom: DomNode,
+    dom: Dom,
     handler: (event: MouseEvent) => void,
   ) {
     if (Browser.isIOS()) {
       this.simulateContextMenuOnIOS(dom, handler);
     } else {
-      dom.onDom("contextmenu", (event: MouseEvent) => {
+      dom.on("contextmenu", (event: MouseEvent) => {
         event.preventDefault();
         handler(event);
       });
@@ -19,7 +19,7 @@ class DomUtils {
   }
 
   private simulateContextMenuOnIOS(
-    dom: DomNode,
+    dom: Dom,
     handler: (event: MouseEvent) => void,
   ): void {
     let longPressTimer: number;
@@ -46,9 +46,10 @@ class DomUtils {
       clearTimeout(longPressTimer);
     };
 
-    dom.onDom("touchstart", startLongPress)
-      .onDom("touchend", cancelLongPress)
-      .onDom("touchmove", cancelLongPress);
+    dom
+      .on("touchstart", startLongPress)
+      .on("touchend", cancelLongPress)
+      .on("touchmove", cancelLongPress);
   }
 }
 

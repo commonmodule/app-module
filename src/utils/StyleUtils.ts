@@ -1,7 +1,7 @@
-import DomNode from "../dom/DomNode.js";
+import Dom from "../dom/Dom.js";
 
 class StyleUtils {
-  public applyTextStroke(target: DomNode, width: number, color: string) {
+  public applyTextStroke(dom: Dom, width: number, color: string) {
     let shadow = "";
     for (let i = -width; i <= width; i++) {
       for (let j = -width; j <= width; j++) {
@@ -11,7 +11,7 @@ class StyleUtils {
       }
     }
     shadow = shadow.slice(0, -1); // Remove last comma
-    target.style({ textShadow: shadow });
+    dom.style({ textShadow: shadow });
   }
 }
 

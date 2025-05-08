@@ -4,13 +4,13 @@ import {
   html,
   InferElementType,
 } from "@commonmodule/universal-page";
-import DomNode, { DomChild } from "./DomNode.js";
+import Dom, { DomChild } from "./Dom.js";
 
 export default function el<EOS extends ElementOrSelector = HTMLElement>(
   elementOrSelector: EOS,
   ...children: DomChild<EOS>[]
-): DomNode<InferElementType<EOS>> {
-  return new DomNode(elementOrSelector, ...children) as DomNode<
+): Dom<InferElementType<EOS>> {
+  return new Dom(elementOrSelector, ...children) as Dom<
     InferElementType<EOS>
   >;
 }
@@ -20,5 +20,5 @@ UniversalEl.impl = el;
 html.impl = (htmlContent: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlContent, "text/html");
-  return new DomNode(doc.body.firstChild as HTMLElement);
+  return new Dom(doc.body.firstChild as HTMLElement);
 };

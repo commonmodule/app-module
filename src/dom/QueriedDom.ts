@@ -1,6 +1,6 @@
-import DomNode from "./DomNode.js";
+import Dom from "./Dom.js";
 
-export default class QueriedDomNode extends DomNode {
+export default class QueriedDom extends Dom {
   constructor(selector: string) {
     super(document.querySelector(selector) as HTMLElement);
   }

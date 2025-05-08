@@ -1,14 +1,13 @@
-import { EventRecord } from "@commonmodule/ts";
+import { EventHandlers, EventNode } from "@commonmodule/ts";
 import {
   DomSelector,
   ElementOrSelector,
   ElementProperties,
   InferElementType,
 } from "@commonmodule/universal-page";
-import WindowEventTreeNode from "./WindowEventTreeNode.js";
 
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
-  | DomNode
+  | Dom
   | ElementProperties<InferElementType<EOS>>
   | string
   | undefined;
@@ -31,10 +30,14 @@ function createElementBySelector<S extends DomSelector>(
   return element;
 }
 
-export default class DomNode<
+type DOMEventHandlers = {
+  [K in keyof HTMLElementEventMap]: (event: HTMLElementEventMap[K]) => void;
+};
+
+export default class Dom<
   H extends HTMLElement = HTMLElement,
-  E extends EventRecord = {},
-> extends WindowEventTreeNode<DomNode, E & { visible: () => void }> {
+  E extends EventHandlers = {},
+> extends EventNode<Dom, E & DOMEventHandlers & { visible: () => void }> {
   public htmlElement: H;
 
   constructor(
@@ -81,7 +84,7 @@ export default class DomNode<
   public prepend(...children: DomChild<H>[]): this {
     for (const child of children) {
       if (child === undefined) continue;
-      else if (child instanceof DomNode) child.appendTo(this, 0);
+      else if (child instanceof Dom) child.appendTo(this, 0);
       else if (typeof child === "string") this.prependText(child);
       else {
         Object.assign(this.htmlElement, child);
@@ -94,7 +97,7 @@ export default class DomNode<
   public append(...children: DomChild<H>[]): this {
     for (const child of children) {
       if (child === undefined) continue;
-      else if (child instanceof DomNode) child.appendTo(this);
+      else if (child instanceof Dom) child.appendTo(this);
       else if (typeof child === "string") this.appendText(child);
       else {
         Object.assign(this.htmlElement, child);
@@ -121,7 +124,7 @@ export default class DomNode<
     this.children.forEach((child) => child.notifyVisibility());
   }
 
-  public appendTo(parent: DomNode, index?: number): this {
+  public appendTo(parent: Dom, index?: number): this {
     if (index === undefined || index >= parent.htmlElement.childNodes.length) {
       parent.htmlElement.appendChild(this.htmlElement);
     } else {
@@ -136,16 +139,10 @@ export default class DomNode<
     return this;
   }
 
-  public clear(...except: (DomNode | undefined)[]) {
+  public clear(...except: (Dom | undefined)[]) {
     super.clear(...except);
     if (this.children.length === 0) this.htmlElement.innerHTML = "";
     return this;
-  }
-
-  public remove() {
-    if (this.removed) return;
-    this.htmlElement.remove();
-    super.remove();
   }
 
   public set text(text: string | undefined) {
@@ -184,33 +181,17 @@ export default class DomNode<
     }
   }
 
-  public onDom<K extends keyof HTMLElementEventMap>(
-    type: K,
-    listener: (this: H, event: HTMLElementEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): this {
-    this.htmlElement.addEventListener(type, listener as EventListener, options);
-    return this;
-  }
-
-  public offDom<K extends keyof HTMLElementEventMap>(
-    type: K,
-    listener: (this: H, event: HTMLElementEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): this {
-    this.htmlElement.removeEventListener(
-      type,
-      listener as EventListener,
-      options,
-    );
-    return this;
-  }
-
   public calculateRect(): DOMRect {
     return this.htmlElement.getBoundingClientRect();
   }
 
-  public clone(): DomNode<H, E> {
-    return new DomNode<H, E>(this.htmlElement.cloneNode(true) as H);
+  public clone(): Dom<H, E> {
+    return new Dom<H, E>(this.htmlElement.cloneNode(true) as H);
+  }
+
+  public remove() {
+    if (this.isRemoved()) throw new Error("Dom already removed");
+    this.htmlElement.remove();
+    super.remove();
   }
 }
