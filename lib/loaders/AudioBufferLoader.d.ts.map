@@ -1,1 +1,0 @@
-{"version":3,"file":"AudioBufferLoader.d.ts","sourceRoot":"","sources":["../../src/loaders/AudioBufferLoader.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,mBAAmB,CAAC;AAGnD,cAAM,iBAAkB,SAAQ,cAAc,CAAC,WAAW,CAAC;cACzC,YAAY,CAAC,GAAG,EAAE,MAAM,GAAG,OAAO,CAAC,WAAW,GAAG,SAAS,CAAC;CA0B5E;;AAED,wBAAuC"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"FontLoader.d.ts","sourceRoot":"","sources":["../../src/loaders/FontLoader.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAC;AAElD,cAAM,UAAW,SAAQ,cAAc,CAAC,OAAO,CAAC;cAC9B,YAAY,CAAC,QAAQ,EAAE,MAAM,GAAG,OAAO,CAAC,OAAO,GAAG,SAAS,CAAC;CAmC7E;;AAED,wBAAgC"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"BodyNode.js","sourceRoot":"","sources":["../../src/dom/BodyNode.ts"],"names":[],"mappings":"AAAA,OAAO,OAAO,MAAM,cAAc,CAAC;AAEnC,MAAM,QAAS,SAAQ,OAAwB;IAC7C;QACE,KAAK,CAAC,QAAQ,CAAC,IAAuB,CAAC,CAAC;IAC1C,CAAC;CACF;AAED,eAAe,IAAI,QAAQ,EAAE,CAAC"}

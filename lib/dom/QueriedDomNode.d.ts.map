@@ -1,1 +1,0 @@
-{"version":3,"file":"QueriedDomNode.d.ts","sourceRoot":"","sources":["../../src/dom/QueriedDomNode.ts"],"names":[],"mappings":"AAAA,OAAO,OAAO,MAAM,cAAc,CAAC;AAEnC,MAAM,CAAC,OAAO,OAAO,cAAe,SAAQ,OAAO;gBACrC,QAAQ,EAAE,MAAM;IAI5B,SAAS,CAAC,SAAS,IAAI,OAAO;CAG/B"}
