@@ -3,22 +3,8 @@ import Browser from "./Browser.js";
 
 const LONG_PRESS_DURATION = 500;
 
-class DomUtils {
-  public enhanceWithContextMenu(
-    dom: Dom,
-    handler: (event: MouseEvent) => void,
-  ) {
-    if (Browser.isIOS()) {
-      this.simulateContextMenuOnIOS(dom, handler);
-    } else {
-      dom.on("contextmenu", (event: MouseEvent) => {
-        event.preventDefault();
-        handler(event);
-      });
-    }
-  }
-
-  private simulateContextMenuOnIOS(
+export default class DomUtils {
+  private static simulateContextMenuOnIOS(
     dom: Dom,
     handler: (event: MouseEvent) => void,
   ): void {
@@ -51,6 +37,18 @@ class DomUtils {
       .on("touchend", cancelLongPress)
       .on("touchmove", cancelLongPress);
   }
-}
 
-export default new DomUtils();
+  public static enhanceWithContextMenu(
+    dom: Dom,
+    handler: (event: MouseEvent) => void,
+  ) {
+    if (Browser.isIOS()) {
+      this.simulateContextMenuOnIOS(dom, handler);
+    } else {
+      dom.on("contextmenu", (event: MouseEvent) => {
+        event.preventDefault();
+        handler(event);
+      });
+    }
+  }
+}

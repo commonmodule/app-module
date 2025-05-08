@@ -3,19 +3,19 @@ interface ImageDimensions {
   height: number;
 }
 
-class ImageOptimizer {
-  private readonly MAGIC_NUMBERS = {
+export default class ImageOptimizer {
+  private static readonly MAGIC_NUMBERS = {
     GIF: [0x47, 0x49, 0x46], // GIF header
     GRAPHIC_CONTROL_EXTENSION: [0x21, 0xF9, 0x04], // GIF animation frame marker
   };
 
-  private readonly DEFAULT_OPTIONS = {
+  private static readonly DEFAULT_OPTIONS = {
     contentType: "image/jpeg",
     extension: "jpg",
     quality: 0.8,
   };
 
-  private readFileAsBuffer(file: File): Promise<Uint8Array> {
+  private static readFileAsBuffer(file: File): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () =>
@@ -25,7 +25,7 @@ class ImageOptimizer {
     });
   }
 
-  private readFileAsDataURL(file: File): Promise<string> {
+  private static readFileAsDataURL(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
@@ -34,7 +34,7 @@ class ImageOptimizer {
     });
   }
 
-  private loadImage(dataUrl: string): Promise<HTMLImageElement> {
+  private static loadImage(dataUrl: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve(img);
@@ -43,13 +43,13 @@ class ImageOptimizer {
     });
   }
 
-  private isGifFormat(buffer: Uint8Array): boolean {
+  private static isGifFormat(buffer: Uint8Array): boolean {
     return this.MAGIC_NUMBERS.GIF.every((byte, index) =>
       buffer[index] === byte
     );
   }
 
-  private containsMultipleFrames(buffer: Uint8Array): boolean {
+  private static containsMultipleFrames(buffer: Uint8Array): boolean {
     let frameCount = 0;
 
     for (
@@ -70,7 +70,7 @@ class ImageOptimizer {
     return false;
   }
 
-  private async isAnimatedGif(file: File): Promise<boolean> {
+  private static async isAnimatedGif(file: File): Promise<boolean> {
     try {
       const buffer = await this.readFileAsBuffer(file);
 
@@ -84,7 +84,7 @@ class ImageOptimizer {
     }
   }
 
-  private calculateOptimalDimensions(
+  private static calculateOptimalDimensions(
     originalDimensions: ImageDimensions,
     targetDimensions: ImageDimensions,
   ): ImageDimensions {
@@ -106,7 +106,7 @@ class ImageOptimizer {
     };
   }
 
-  private async optimizeImageUsingCanvas(
+  private static async optimizeImageUsingCanvas(
     image: HTMLImageElement,
     dimensions: ImageDimensions,
   ): Promise<Blob> {
@@ -134,7 +134,7 @@ class ImageOptimizer {
     });
   }
 
-  public async optimizeImage(
+  public static async optimizeImage(
     file: File,
     maxWidth: number,
     maxHeight: number,
@@ -177,5 +177,3 @@ class ImageOptimizer {
     });
   }
 }
-
-export default new ImageOptimizer();

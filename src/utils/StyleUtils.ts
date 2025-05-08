@@ -1,7 +1,7 @@
 import Dom from "../dom/Dom.js";
 
-class StyleUtils {
-  public applyTextStroke(dom: Dom, width: number, color: string) {
+export default class StyleUtils {
+  public static applyTextStroke(dom: Dom, width: number, color: string) {
     let shadow = "";
     for (let i = -width; i <= width; i++) {
       for (let j = -width; j <= width; j++) {
@@ -14,5 +14,3 @@ class StyleUtils {
     dom.style({ textShadow: shadow });
   }
 }
-
-export default new StyleUtils();

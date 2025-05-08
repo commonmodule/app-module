@@ -1,10 +1,30 @@
-import { EventHandlers, EventNode } from "@commonmodule/ts";
+import { DefaultHandlers, EventNode } from "@commonmodule/ts";
 import {
   DomSelector,
   ElementOrSelector,
   ElementProperties,
   InferElementType,
 } from "@commonmodule/universal-page";
+import createElementBySelector from "./createElementBySelector.js";
+
+type ElementEventMap<H extends HTMLElement> = H extends HTMLVideoElement
+  ? HTMLMediaElementEventMap & HTMLVideoElementEventMap
+  : H extends HTMLAudioElement ? HTMLMediaElementEventMap
+  : HTMLElementEventMap;
+type ElementEventHandlers<H extends HTMLElement> = {
+  [K in keyof HTMLElementEventMap]: (event: ElementEventMap<H>[K]) => void;
+};
+
+type DomDefaultHandlers = { visible: () => void };
+export type DomHandlers<E, H extends HTMLElement> = Omit<
+  E,
+  keyof DomDefaultHandlers | keyof ElementEventHandlers<H>
+>;
+type WithDomDefaultHandlers<E> = E & DomDefaultHandlers;
+type WithAllHandlers<H extends HTMLElement, E> =
+  & WithDomDefaultHandlers<E>
+  & ElementEventHandlers<H>
+  & DefaultHandlers;
 
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
   | Dom
@@ -12,32 +32,10 @@ export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
   | string
   | undefined;
 
-function createElementBySelector<S extends DomSelector>(
-  selector: S,
-): InferElementType<S> {
-  const parts = (selector || "div").split(/([#.])/);
-  const tagName = parts[0] || "div";
-  const element = document.createElement(tagName) as InferElementType<S>;
-
-  let currentType: "#" | "." | "" = "";
-  for (let i = 1; i < parts.length; i += 2) {
-    currentType = parts[i] as "#" | ".";
-    const value = parts[i + 1];
-    if (currentType === "#") element.id = value;
-    else if (currentType === ".") element.classList.add(value);
-  }
-
-  return element;
-}
-
-type DOMEventHandlers = {
-  [K in keyof HTMLElementEventMap]: (event: HTMLElementEventMap[K]) => void;
-};
-
 export default class Dom<
   H extends HTMLElement = HTMLElement,
-  E extends EventHandlers = {},
-> extends EventNode<Dom, E & DOMEventHandlers & { visible: () => void }> {
+  E extends DomHandlers<E, H> = {},
+> extends EventNode<Dom, WithDomDefaultHandlers<E>> {
   public htmlElement: H;
 
   constructor(
@@ -152,6 +150,19 @@ export default class Dom<
 
   public get text(): string {
     return this.htmlElement.textContent ?? "";
+  }
+
+  public override on<K extends keyof WithAllHandlers<H, E>>(
+    eventName: K,
+    handler: WithAllHandlers<H, E>[K],
+  ): this {
+    if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
+      this.htmlElement.addEventListener(
+        eventName as keyof HTMLElementEventMap,
+        handler as EventListener,
+      );
+    }
+    return super.on(eventName, handler);
   }
 
   public addClass(...classNames: string[]): this {

@@ -1,1 +1,1 @@
-{"version":3,"file":"SPAInitializer.d.ts","sourceRoot":"","sources":["../src/SPAInitializer.ts"],"names":[],"mappings":"AAEA,cAAM,cAAc;IAClB,OAAO,CAAC,MAAM,CAAC,QAAQ,CAAC,gBAAgB,CAAiB;IAElD,IAAI;CAOZ;;AAED,wBAAoC"}
+{"version":3,"file":"SPAInitializer.d.ts","sourceRoot":"","sources":["../src/SPAInitializer.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,OAAO,OAAO,cAAc;IACjC,OAAO,CAAC,MAAM,CAAC,QAAQ,CAAC,gBAAgB,CAAiB;WAE3C,IAAI;CAOnB"}

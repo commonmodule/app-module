@@ -1,0 +1,1 @@
+{"version":3,"file":"createElementBySelector.d.ts","sourceRoot":"","sources":["../../src/dom/createElementBySelector.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,gBAAgB,EAAE,MAAM,8BAA8B,CAAC;AAE7E,MAAM,CAAC,OAAO,UAAU,uBAAuB,CAAC,CAAC,SAAS,WAAW,EACnE,QAAQ,EAAE,CAAC,GACV,gBAAgB,CAAC,CAAC,CAAC,CAcrB"}

@@ -1,8 +1,6 @@
 import Dom from "../dom/Dom.js";
-declare class DomUtils {
-    enhanceWithContextMenu(dom: Dom, handler: (event: MouseEvent) => void): void;
-    private simulateContextMenuOnIOS;
+export default class DomUtils {
+    private static simulateContextMenuOnIOS;
+    static enhanceWithContextMenu(dom: Dom, handler: (event: MouseEvent) => void): void;
 }
-declare const _default: DomUtils;
-export default _default;
 //# sourceMappingURL=DomUtils.d.ts.map

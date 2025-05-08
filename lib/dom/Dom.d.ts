@@ -1,12 +1,17 @@
-import { EventHandlers, EventNode } from "@commonmodule/ts";
+import { DefaultHandlers, EventNode } from "@commonmodule/ts";
 import { DomSelector, ElementOrSelector, ElementProperties, InferElementType } from "@commonmodule/universal-page";
-export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = Dom | ElementProperties<InferElementType<EOS>> | string | undefined;
-type DOMEventHandlers = {
-    [K in keyof HTMLElementEventMap]: (event: HTMLElementEventMap[K]) => void;
+type ElementEventMap<H extends HTMLElement> = H extends HTMLVideoElement ? HTMLMediaElementEventMap & HTMLVideoElementEventMap : H extends HTMLAudioElement ? HTMLMediaElementEventMap : HTMLElementEventMap;
+type ElementEventHandlers<H extends HTMLElement> = {
+    [K in keyof HTMLElementEventMap]: (event: ElementEventMap<H>[K]) => void;
 };
-export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHandlers = {}> extends EventNode<Dom, E & DOMEventHandlers & {
+type DomDefaultHandlers = {
     visible: () => void;
-}> {
+};
+export type DomHandlers<E, H extends HTMLElement> = Omit<E, keyof DomDefaultHandlers | keyof ElementEventHandlers<H>>;
+type WithDomDefaultHandlers<E> = E & DomDefaultHandlers;
+type WithAllHandlers<H extends HTMLElement, E> = WithDomDefaultHandlers<E> & ElementEventHandlers<H> & DefaultHandlers;
+export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = Dom | ElementProperties<InferElementType<EOS>> | string | undefined;
+export default class Dom<H extends HTMLElement = HTMLElement, E extends DomHandlers<E, H> = {}> extends EventNode<Dom, WithDomDefaultHandlers<E>> {
     htmlElement: H;
     constructor(elementOrSelector?: H | DomSelector, ...children: DomChild<H>[]);
     private prependText;
@@ -19,6 +24,7 @@ export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHan
     clear(...except: (Dom | undefined)[]): this;
     set text(text: string | undefined);
     get text(): string;
+    on<K extends keyof WithAllHandlers<H, E>>(eventName: K, handler: WithAllHandlers<H, E>[K]): this;
     addClass(...classNames: string[]): this;
     hasClass(className: string): boolean;
     removeClass(...classNames: string[]): this;

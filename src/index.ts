@@ -1,3 +1,5 @@
+export { default as Body } from "./dom/Body.js";
+export { default as Dom, DomChild, DomHandlers } from "./dom/Dom.js";
 export { default as el } from "./dom/el.js";
 export { default as I18nMessageManager } from "./i18n/I18nMessageManager.js";
 export { default as msg } from "./i18n/msg.js";
