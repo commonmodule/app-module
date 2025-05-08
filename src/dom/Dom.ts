@@ -1,8 +1,4 @@
-import {
-  EventHandlers,
-  EventNode,
-  WithDefaultHandlers,
-} from "@commonmodule/ts";
+import { DefaultHandlers, EventHandlers, EventNode } from "@commonmodule/ts";
 import {
   DomSelector,
   ElementOrSelector,
@@ -19,11 +15,12 @@ type ElementEventHandlers<H extends HTMLElement> = {
   [K in keyof HTMLElementEventMap]: (event: ElementEventMap<H>[K]) => void;
 };
 
-type WithDomDefaultHandlers<E> = E & { visible: () => void };
-type WithDomAllHandlers<H extends HTMLElement, E> =
-  & WithDomDefaultHandlers<E>
-  & ElementEventHandlers<H>
-  & WithDefaultHandlers<E>;
+type DomDefaultHandlers = { visible: () => void };
+type AllDomHandlers<H extends HTMLElement, E> =
+  & E
+  & DefaultHandlers
+  & DomDefaultHandlers
+  & ElementEventHandlers<H>;
 
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
   | Dom
@@ -34,7 +31,7 @@ export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
 export default class Dom<
   H extends HTMLElement = HTMLElement,
   E extends EventHandlers = {},
-> extends EventNode<Dom, WithDomDefaultHandlers<E>> {
+> extends EventNode<Dom, AllDomHandlers<H, E>> {
   public htmlElement: H;
 
   constructor(
@@ -113,10 +110,7 @@ export default class Dom<
   }
 
   private notifyVisibility() {
-    this.emit(
-      "visible",
-      ...[] as Parameters<WithDomDefaultHandlers<E>["visible"]>,
-    );
+    this.emit("visible");
     this.children.forEach((child) => child.notifyVisibility());
   }
 
@@ -150,47 +144,60 @@ export default class Dom<
     return this.htmlElement.textContent ?? "";
   }
 
-  public on<K extends keyof { remove: () => void }>(
-    eventName: K,
-    handler: { remove: () => void }[K],
-  ): this;
-  public on<K extends keyof { visible: () => void }>(
-    eventName: K,
-    handler: { visible: () => void }[K],
-  ): this;
   public on<K extends keyof E>(eventName: K, handler: E[K]): this;
+
+  public on<K extends keyof DefaultHandlers>(
+    eventName: K,
+    handler: DefaultHandlers[K],
+  ): this;
+
+  public on<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    handler: DomDefaultHandlers[K],
+  ): this;
+
   public on<K extends keyof ElementEventMap<H>>(
     eventName: K,
     handler: (event: ElementEventMap<H>[K]) => void,
   ): this;
-  public override on<K extends keyof WithDomAllHandlers<H, E>>(
+
+  public override on<K extends keyof AllDomHandlers<H, E>>(
     eventName: K,
-    handler: WithDomAllHandlers<H, E>[K],
+    handler: AllDomHandlers<H, E>[K],
   ): this {
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
       this.htmlElement.addEventListener(
         eventName as keyof HTMLElementEventMap,
-        handler as EventListener,
+        handler,
       );
     }
-    return super.on(
-      eventName,
-      handler as WithDefaultHandlers<WithDomDefaultHandlers<E>>[K],
-    );
+    return super.on(eventName, handler);
   }
 
-  public override emit<K extends keyof WithDomAllHandlers<H, E>>(
+  protected async emit<K extends keyof E>(
     eventName: K,
-    ...args: Parameters<WithDomAllHandlers<H, E>[K]>
-  ): this {
+    ...args: Parameters<E[K]>
+  ): Promise<ReturnType<E[K]>[]>;
+
+  protected async emit<K extends keyof DefaultHandlers>(
+    eventName: K,
+    ...args: Parameters<DefaultHandlers[K]>
+  ): Promise<ReturnType<DefaultHandlers[K]>[]>;
+
+  protected override emit<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    ...args: Parameters<DomDefaultHandlers[K]>
+  ): Promise<ReturnType<DomDefaultHandlers[K]>[]>;
+
+  protected override emit<K extends keyof AllDomHandlers<H, E>>(
+    eventName: K,
+    ...args: Parameters<AllDomHandlers<H, E>[K]>
+  ): Promise<ReturnType<AllDomHandlers<H, E>[K]>[]> {
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
       const event = new Event(eventName as string);
       this.htmlElement.dispatchEvent(event);
     }
-    return super.emit(
-      eventName,
-      ...args as Parameters<WithDefaultHandlers<WithDomDefaultHandlers<E>>[K]>,
-    );
+    return super.emit(eventName, ...args);
   }
 
   public addClass(...classNames: string[]): this {
