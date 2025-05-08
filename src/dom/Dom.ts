@@ -1,4 +1,8 @@
-import { DefaultHandlers, EventNode } from "@commonmodule/ts";
+import {
+  EventHandlers,
+  EventNode,
+  WithDefaultHandlers,
+} from "@commonmodule/ts";
 import {
   DomSelector,
   ElementOrSelector,
@@ -15,16 +19,11 @@ type ElementEventHandlers<H extends HTMLElement> = {
   [K in keyof HTMLElementEventMap]: (event: ElementEventMap<H>[K]) => void;
 };
 
-type DomDefaultHandlers = { visible: () => void };
-export type DomHandlers<E, H extends HTMLElement> = Omit<
-  E,
-  keyof DomDefaultHandlers | keyof ElementEventHandlers<H>
->;
-type WithDomDefaultHandlers<E> = E & DomDefaultHandlers;
-type WithAllHandlers<H extends HTMLElement, E> =
+type WithDomDefaultHandlers<E> = E & { visible: () => void };
+type WithDomAllHandlers<H extends HTMLElement, E> =
   & WithDomDefaultHandlers<E>
   & ElementEventHandlers<H>
-  & DefaultHandlers;
+  & WithDefaultHandlers<E>;
 
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
   | Dom
@@ -34,7 +33,7 @@ export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> =
 
 export default class Dom<
   H extends HTMLElement = HTMLElement,
-  E extends DomHandlers<E, H> = {},
+  E extends EventHandlers = {},
 > extends EventNode<Dom, WithDomDefaultHandlers<E>> {
   public htmlElement: H;
 
@@ -116,9 +115,8 @@ export default class Dom<
   private notifyVisibility() {
     this.emit(
       "visible",
-      ...([] as Parameters<(E & { visible: () => void })["visible"]>),
+      ...[] as Parameters<WithDomDefaultHandlers<E>["visible"]>,
     );
-
     this.children.forEach((child) => child.notifyVisibility());
   }
 
@@ -152,9 +150,22 @@ export default class Dom<
     return this.htmlElement.textContent ?? "";
   }
 
-  public override on<K extends keyof WithAllHandlers<H, E>>(
+  public on<K extends keyof { remove: () => void }>(
     eventName: K,
-    handler: WithAllHandlers<H, E>[K],
+    handler: { remove: () => void }[K],
+  ): this;
+  public on<K extends keyof { visible: () => void }>(
+    eventName: K,
+    handler: { visible: () => void }[K],
+  ): this;
+  public on<K extends keyof E>(eventName: K, handler: E[K]): this;
+  public on<K extends keyof ElementEventMap<H>>(
+    eventName: K,
+    handler: (event: ElementEventMap<H>[K]) => void,
+  ): this;
+  public override on<K extends keyof WithDomAllHandlers<H, E>>(
+    eventName: K,
+    handler: WithDomAllHandlers<H, E>[K],
   ): this {
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
       this.htmlElement.addEventListener(
@@ -162,7 +173,24 @@ export default class Dom<
         handler as EventListener,
       );
     }
-    return super.on(eventName, handler);
+    return super.on(
+      eventName,
+      handler as WithDefaultHandlers<WithDomDefaultHandlers<E>>[K],
+    );
+  }
+
+  public override emit<K extends keyof WithDomAllHandlers<H, E>>(
+    eventName: K,
+    ...args: Parameters<WithDomAllHandlers<H, E>[K]>
+  ): this {
+    if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
+      const event = new Event(eventName as string);
+      this.htmlElement.dispatchEvent(event);
+    }
+    return super.emit(
+      eventName,
+      ...args as Parameters<WithDefaultHandlers<WithDomDefaultHandlers<E>>[K]>,
+    );
   }
 
   public addClass(...classNames: string[]): this {
