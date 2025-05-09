@@ -1,3 +1,4 @@
+import AppRoot from "../dom/AppRoot.js";
 import Dom from "../dom/Dom.js";
 import Store from "../store/Store.js";
 
@@ -9,9 +10,10 @@ class Browser {
   private store = new Store("browser-info");
 
   constructor() {
-    document.addEventListener("visibilitychange", () => {
-      this._isPageVisible = !document.hidden;
-    });
+    AppRoot.on(
+      "visibilitychange",
+      () => this._isPageVisible = !document.hidden,
+    );
   }
 
   public isAndroid() {

@@ -1,13 +1,13 @@
 import { DefaultHandlers, EventHandlers, EventNode } from "@commonmodule/ts";
 import { DomSelector, ElementOrSelector, ElementProperties, InferElementType } from "@commonmodule/universal-page";
-type ElementEventMap<H extends HTMLElement> = H extends HTMLVideoElement ? HTMLMediaElementEventMap & HTMLVideoElementEventMap : H extends HTMLAudioElement ? HTMLMediaElementEventMap : HTMLElementEventMap;
+export type ElementEventMap<H extends HTMLElement> = H extends HTMLBodyElement ? WindowEventMap & DocumentEventMap & HTMLBodyElementEventMap : H extends HTMLVideoElement ? HTMLMediaElementEventMap & HTMLVideoElementEventMap : H extends HTMLAudioElement ? HTMLMediaElementEventMap : HTMLElementEventMap;
 type ElementEventHandlers<H extends HTMLElement> = {
     [K in keyof HTMLElementEventMap]: (event: ElementEventMap<H>[K]) => void;
 };
-type DomDefaultHandlers = {
+export type DomDefaultHandlers = {
     visible: () => void;
 };
-type AllDomHandlers<H extends HTMLElement, E> = E & DefaultHandlers & DomDefaultHandlers & ElementEventHandlers<H>;
+export type AllDomHandlers<H extends HTMLElement, E> = E & DefaultHandlers & DomDefaultHandlers & ElementEventHandlers<H>;
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = Dom | ElementProperties<InferElementType<EOS>> | string | undefined;
 export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHandlers = {}> extends EventNode<Dom, AllDomHandlers<H, E>> {
     htmlElement: H;
@@ -22,10 +22,14 @@ export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHan
     clear(...except: (Dom | undefined)[]): this;
     set text(text: string | undefined);
     get text(): string;
-    on<K extends keyof E>(eventName: K, handler: E[K]): this;
-    on<K extends keyof DefaultHandlers>(eventName: K, handler: DefaultHandlers[K]): this;
-    on<K extends keyof DomDefaultHandlers>(eventName: K, handler: DomDefaultHandlers[K]): this;
-    on<K extends keyof ElementEventMap<H>>(eventName: K, handler: (event: ElementEventMap<H>[K]) => void): this;
+    on<K extends keyof E>(eventName: K, eventHandler: E[K]): this;
+    on<K extends keyof DefaultHandlers>(eventName: K, eventHandler: DefaultHandlers[K]): this;
+    on<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler: DomDefaultHandlers[K]): this;
+    on<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void): this;
+    off<K extends keyof E>(eventName: K, eventHandler?: E[K]): this;
+    off<K extends keyof DefaultHandlers>(eventName: K, eventHandler?: DefaultHandlers[K]): this;
+    off<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler?: DomDefaultHandlers[K]): this;
+    off<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler?: (event: ElementEventMap<H>[K]) => void): this;
     protected emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): Promise<ReturnType<E[K]>[]>;
     protected emit<K extends keyof DefaultHandlers>(eventName: K, ...args: Parameters<DefaultHandlers[K]>): Promise<ReturnType<DefaultHandlers[K]>[]>;
     protected emit<K extends keyof DomDefaultHandlers>(eventName: K, ...args: Parameters<DomDefaultHandlers[K]>): Promise<ReturnType<DomDefaultHandlers[K]>[]>;

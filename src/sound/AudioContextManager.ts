@@ -1,10 +1,11 @@
-const canPlayOgg = new Audio().canPlayType("audio/ogg") !== "";
+import AppRoot from "../dom/AppRoot.js";
 
+const canPlayOgg = new Audio().canPlayType("audio/ogg") !== "";
 const audioContext =
   new (window.AudioContext || (window as any).webkitAudioContext)();
-["mousedown", "touchend"].forEach((event) =>
-  window.addEventListener(event, () => audioContext.resume())
-);
+
+AppRoot.on("mousedown", () => audioContext.resume());
+AppRoot.on("touchend", () => audioContext.resume());
 
 class AudioContextManager {
   public canPlayOgg(): boolean {

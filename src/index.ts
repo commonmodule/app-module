@@ -1,4 +1,4 @@
-export { default as Body } from "./dom/Body.js";
+export { default as AppRoot } from "./dom/AppRoot.js";
 export { default as Dom, DomChild } from "./dom/Dom.js";
 export { default as el } from "./dom/el.js";
 export { default as I18nMessageManager } from "./i18n/I18nMessageManager.js";
@@ -23,3 +23,4 @@ export { default as DomUtils } from "./utils/DomUtils.js";
 export { default as ImageOptimizer } from "./utils/ImageOptimizer.js";
 export { default as StyleUtils } from "./utils/StyleUtils.js";
 export { default as WebSocketClient } from "./websocket/WebSocketClient.js";
+

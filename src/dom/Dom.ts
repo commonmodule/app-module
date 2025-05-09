@@ -7,16 +7,20 @@ import {
 } from "@commonmodule/universal-page";
 import createElementBySelector from "./createElementBySelector.js";
 
-type ElementEventMap<H extends HTMLElement> = H extends HTMLVideoElement
-  ? HTMLMediaElementEventMap & HTMLVideoElementEventMap
+export type ElementEventMap<H extends HTMLElement> = H extends HTMLBodyElement
+  ? WindowEventMap & DocumentEventMap & HTMLBodyElementEventMap
+  : H extends HTMLVideoElement
+    ? HTMLMediaElementEventMap & HTMLVideoElementEventMap
   : H extends HTMLAudioElement ? HTMLMediaElementEventMap
   : HTMLElementEventMap;
+
 type ElementEventHandlers<H extends HTMLElement> = {
   [K in keyof HTMLElementEventMap]: (event: ElementEventMap<H>[K]) => void;
 };
 
-type DomDefaultHandlers = { visible: () => void };
-type AllDomHandlers<H extends HTMLElement, E> =
+export type DomDefaultHandlers = { visible: () => void };
+
+export type AllDomHandlers<H extends HTMLElement, E> =
   & E
   & DefaultHandlers
   & DomDefaultHandlers
@@ -144,34 +148,71 @@ export default class Dom<
     return this.htmlElement.textContent ?? "";
   }
 
-  public on<K extends keyof E>(eventName: K, handler: E[K]): this;
+  public override on<K extends keyof E>(eventName: K, eventHandler: E[K]): this;
 
-  public on<K extends keyof DefaultHandlers>(
+  public override on<K extends keyof DefaultHandlers>(
     eventName: K,
-    handler: DefaultHandlers[K],
+    eventHandler: DefaultHandlers[K],
   ): this;
 
-  public on<K extends keyof DomDefaultHandlers>(
+  public override on<K extends keyof DomDefaultHandlers>(
     eventName: K,
-    handler: DomDefaultHandlers[K],
+    eventHandler: DomDefaultHandlers[K],
   ): this;
 
-  public on<K extends keyof ElementEventMap<H>>(
+  public override on<K extends keyof ElementEventMap<H>>(
     eventName: K,
-    handler: (event: ElementEventMap<H>[K]) => void,
+    eventHandler: (event: ElementEventMap<H>[K]) => void,
   ): this;
 
   public override on<K extends keyof AllDomHandlers<H, E>>(
     eventName: K,
-    handler: AllDomHandlers<H, E>[K],
+    eventHandler: AllDomHandlers<H, E>[K],
   ): this {
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
       this.htmlElement.addEventListener(
         eventName as keyof HTMLElementEventMap,
-        handler,
+        eventHandler,
       );
+      return this;
     }
-    return super.on(eventName, handler);
+
+    return super.on(eventName, eventHandler);
+  }
+
+  public override off<K extends keyof E>(
+    eventName: K,
+    eventHandler?: E[K],
+  ): this;
+
+  public override off<K extends keyof DefaultHandlers>(
+    eventName: K,
+    eventHandler?: DefaultHandlers[K],
+  ): this;
+
+  public override off<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    eventHandler?: DomDefaultHandlers[K],
+  ): this;
+
+  public override off<K extends keyof ElementEventMap<H>>(
+    eventName: K,
+    eventHandler?: (event: ElementEventMap<H>[K]) => void,
+  ): this;
+
+  public override off<K extends keyof AllDomHandlers<H, E>>(
+    eventName: K,
+    eventHandler?: AllDomHandlers<H, E>[K],
+  ): this {
+    if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
+      this.htmlElement.removeEventListener(
+        eventName as keyof HTMLElementEventMap,
+        eventHandler as EventListener,
+      );
+      return this;
+    }
+
+    return super.off(eventName, eventHandler);
   }
 
   protected async emit<K extends keyof E>(
@@ -197,6 +238,7 @@ export default class Dom<
       const event = new Event(eventName as string);
       this.htmlElement.dispatchEvent(event);
     }
+
     return super.emit(eventName, ...args);
   }
 

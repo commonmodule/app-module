@@ -1,5 +1,6 @@
 import { ArrayUtils, EventContainer } from "@commonmodule/ts";
 import View from "./View.js";
+import AppRoot from "../dom/AppRoot.js";
 
 if (!(window as any).URLPattern) {
   await import("urlpattern-polyfill");
@@ -23,10 +24,7 @@ class Router extends EventContainer<{
 
   constructor() {
     super();
-    window.addEventListener(
-      "popstate",
-      (event) => this.updateActiveViews(event.state),
-    );
+    AppRoot.on("popstate", (event) => this.updateActiveViews(event.state));
   }
 
   private openView(View: ViewConstructor, data: any) {

@@ -1,6 +1,7 @@
 import { IntegerUtils } from "@commonmodule/ts";
 import Sound from "./Sound.js";
 import Browser from "../utils/Browser.js";
+import AppRoot from "../dom/AppRoot.js";
 
 export default class RandomSoundLooper {
   private readonly sounds: Sound[] = [];
@@ -14,10 +15,7 @@ export default class RandomSoundLooper {
     }
 
     if (Browser.isMobileDevice()) {
-      document.addEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange,
-      );
+      AppRoot.on("visibilitychange", this.handleVisibilityChange);
     }
   }
 
