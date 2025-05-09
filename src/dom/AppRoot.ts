@@ -46,6 +46,48 @@ class AppRoot extends Dom<HTMLBodyElement> {
 
     return super.on(eventName as any, handler);
   }
+
+  public override bind<K extends keyof {}>(
+    eventName: K,
+    target: Dom<HTMLElement>,
+    eventHandler: {}[K],
+  ): this;
+
+  public override bind<K extends keyof DefaultHandlers>(
+    eventName: K,
+    target: Dom<HTMLElement>,
+    eventHandler: DefaultHandlers[K],
+  ): this;
+
+  public override bind<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    target: Dom<HTMLElement>,
+    eventHandler: DomDefaultHandlers[K],
+  ): this;
+
+  public override bind<K extends keyof ElementEventMap<HTMLBodyElement>>(
+    eventName: K,
+    target: Dom<HTMLElement>,
+    eventHandler: (event: ElementEventMap<HTMLBodyElement>[K]) => void,
+  ): this;
+
+  public override bind<K extends keyof AllDomHandlers<HTMLBodyElement, {}>>(
+    eventName: K,
+    target: Dom<HTMLElement>,
+    eventHandler: AllDomHandlers<HTMLBodyElement, {}>[K],
+  ): this {
+    if (("on" + eventName) in window) {
+      window.addEventListener(eventName, eventHandler as EventListener);
+      return this;
+    }
+
+    if (("on" + eventName) in document) {
+      document.addEventListener(eventName, eventHandler as EventListener);
+      return this;
+    }
+
+    return super.bind(eventName as any, target, eventHandler);
+  }
 }
 
 export default new AppRoot();
