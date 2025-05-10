@@ -1,4 +1,4 @@
-import { DefaultHandlers } from "@commonmodule/ts";
+import { DefaultHandlers, IEventContainer } from "@commonmodule/ts";
 import Dom, {
   AllDomHandlers,
   DomDefaultHandlers,
@@ -50,31 +50,31 @@ class AppRoot extends Dom<HTMLBodyElement> {
   public override bind<K extends keyof {}>(
     eventName: K,
     eventHandler: {}[K],
-    target: Dom<HTMLElement>,
+    target: IEventContainer,
   ): this;
 
   public override bind<K extends keyof DefaultHandlers>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: DefaultHandlers[K],
-    target: Dom<HTMLElement>,
   ): this;
 
   public override bind<K extends keyof DomDefaultHandlers>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: DomDefaultHandlers[K],
-    target: Dom<HTMLElement>,
   ): this;
 
   public override bind<K extends keyof ElementEventMap<HTMLBodyElement>>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: (event: ElementEventMap<HTMLBodyElement>[K]) => void,
-    target: Dom<HTMLElement>,
   ): this;
 
   public override bind<K extends keyof AllDomHandlers<HTMLBodyElement, {}>>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: AllDomHandlers<HTMLBodyElement, {}>[K],
-    target: Dom<HTMLElement>,
   ): this {
     if (("on" + eventName) in window) {
       window.addEventListener(eventName, eventHandler as EventListener);
@@ -86,7 +86,7 @@ class AppRoot extends Dom<HTMLBodyElement> {
       return this;
     }
 
-    return super.bind(eventName as any, eventHandler, target);
+    return super.bind(target, eventName as any, eventHandler);
   }
 }
 

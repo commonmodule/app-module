@@ -1,4 +1,9 @@
-import { DefaultHandlers, EventHandlers, EventNode } from "@commonmodule/ts";
+import {
+  DefaultHandlers,
+  EventHandlers,
+  EventNode,
+  IEventContainer,
+} from "@commonmodule/ts";
 import {
   DomSelector,
   ElementOrSelector,
@@ -243,45 +248,43 @@ export default class Dom<
   }
 
   public bind<K extends keyof E>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: E[K],
-    target: Dom,
   ): this;
 
   public bind<K extends keyof DefaultHandlers>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: DefaultHandlers[K],
-    target: Dom,
   ): this;
 
   public bind<K extends keyof DomDefaultHandlers>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: DomDefaultHandlers[K],
-    target: Dom,
   ): this;
 
   public bind<K extends keyof ElementEventMap<H>>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: (event: ElementEventMap<H>[K]) => void,
-    target: Dom,
   ): this;
 
   public bind<K extends keyof AllDomHandlers<H, E>>(
+    target: IEventContainer,
     eventName: K,
     eventHandler: AllDomHandlers<H, E>[K],
-    target: Dom,
   ): this {
     if (
+      target instanceof Dom &&
       ("on" + (eventName as keyof HTMLElementEventMap)) in target.htmlElement
     ) {
-      target.htmlElement.addEventListener(
-        eventName as keyof HTMLElementEventMap,
-        eventHandler,
-      );
+      target.htmlElement.addEventListener(eventName, eventHandler);
       return this;
     }
 
-    return super.bind(eventName, eventHandler, target);
+    return super.bind(target, eventName, eventHandler);
   }
 
   public addClass(...classNames: string[]): this {

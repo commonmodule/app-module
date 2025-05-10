@@ -1,4 +1,4 @@
-import { DefaultHandlers, EventHandlers, EventNode } from "@commonmodule/ts";
+import { DefaultHandlers, EventHandlers, EventNode, IEventContainer } from "@commonmodule/ts";
 import { DomSelector, ElementOrSelector, ElementProperties, InferElementType } from "@commonmodule/universal-page";
 export type ElementEventMap<H extends HTMLElement> = H extends HTMLBodyElement ? WindowEventMap & DocumentEventMap & HTMLBodyElementEventMap : H extends HTMLVideoElement ? HTMLMediaElementEventMap & HTMLVideoElementEventMap : H extends HTMLAudioElement ? HTMLMediaElementEventMap : HTMLElementEventMap;
 type ElementEventHandlers<H extends HTMLElement> = {
@@ -33,10 +33,10 @@ export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHan
     protected emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): Promise<ReturnType<E[K]>[]>;
     protected emit<K extends keyof DefaultHandlers>(eventName: K, ...args: Parameters<DefaultHandlers[K]>): Promise<ReturnType<DefaultHandlers[K]>[]>;
     protected emit<K extends keyof DomDefaultHandlers>(eventName: K, ...args: Parameters<DomDefaultHandlers[K]>): Promise<ReturnType<DomDefaultHandlers[K]>[]>;
-    bind<K extends keyof E>(eventName: K, eventHandler: E[K], target: Dom): this;
-    bind<K extends keyof DefaultHandlers>(eventName: K, eventHandler: DefaultHandlers[K], target: Dom): this;
-    bind<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler: DomDefaultHandlers[K], target: Dom): this;
-    bind<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void, target: Dom): this;
+    bind<K extends keyof E>(target: IEventContainer, eventName: K, eventHandler: E[K]): this;
+    bind<K extends keyof DefaultHandlers>(target: IEventContainer, eventName: K, eventHandler: DefaultHandlers[K]): this;
+    bind<K extends keyof DomDefaultHandlers>(target: IEventContainer, eventName: K, eventHandler: DomDefaultHandlers[K]): this;
+    bind<K extends keyof ElementEventMap<H>>(target: IEventContainer, eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void): this;
     addClass(...classNames: string[]): this;
     hasClass(className: string): boolean;
     removeClass(...classNames: string[]): this;
