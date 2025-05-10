@@ -220,12 +220,12 @@ export default class Dom<
     return super.off(eventName, eventHandler);
   }
 
-  protected async emit<K extends keyof E>(
+  protected override emit<K extends keyof E>(
     eventName: K,
     ...args: Parameters<E[K]>
   ): Promise<ReturnType<E[K]>[]>;
 
-  protected async emit<K extends keyof DefaultHandlers>(
+  protected override emit<K extends keyof DefaultHandlers>(
     eventName: K,
     ...args: Parameters<DefaultHandlers[K]>
   ): Promise<ReturnType<DefaultHandlers[K]>[]>;
@@ -242,48 +242,41 @@ export default class Dom<
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
       const event = new Event(eventName as string);
       this.htmlElement.dispatchEvent(event);
+      return Promise.resolve([]);
     }
 
     return super.emit(eventName, ...args);
   }
 
-  public bind<K extends keyof E>(
+  public override bind<K extends keyof E>(
     target: IEventContainer,
     eventName: K,
     eventHandler: E[K],
   ): this;
 
-  public bind<K extends keyof DefaultHandlers>(
+  public override bind<K extends keyof DefaultHandlers>(
     target: IEventContainer,
     eventName: K,
     eventHandler: DefaultHandlers[K],
   ): this;
 
-  public bind<K extends keyof DomDefaultHandlers>(
+  public override bind<K extends keyof DomDefaultHandlers>(
     target: IEventContainer,
     eventName: K,
     eventHandler: DomDefaultHandlers[K],
   ): this;
 
-  public bind<K extends keyof ElementEventMap<H>>(
+  public override bind<K extends keyof ElementEventMap<H>>(
     target: IEventContainer,
     eventName: K,
     eventHandler: (event: ElementEventMap<H>[K]) => void,
   ): this;
 
-  public bind<K extends keyof AllDomHandlers<H, E>>(
+  public override bind<K extends keyof AllDomHandlers<H, E>>(
     target: IEventContainer,
     eventName: K,
     eventHandler: AllDomHandlers<H, E>[K],
   ): this {
-    if (
-      target instanceof Dom &&
-      ("on" + (eventName as keyof HTMLElementEventMap)) in target.htmlElement
-    ) {
-      target.htmlElement.addEventListener(eventName, eventHandler);
-      return this;
-    }
-
     return super.bind(target, eventName, eventHandler);
   }
 
