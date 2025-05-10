@@ -1,11 +1,11 @@
-import { IntegerUtils } from "@commonmodule/ts";
+import { EventContainer, IntegerUtils } from "@commonmodule/ts";
+import AppRoot from "../dom/AppRoot.js";
 import Browser from "../utils/Browser.js";
 import AudioContextManager from "./AudioContextManager.js";
 import Sound from "./Sound.js";
 import VolumeManager from "./VolumeManager.js";
-import AppRoot from "../dom/AppRoot.js";
 
-export default class BackgroundMusic {
+export default class BackgroundMusic extends EventContainer {
   private readonly sounds: Sound[] = [];
   private currentSound?: Sound;
   private currentIndex: number = -1;
@@ -13,6 +13,8 @@ export default class BackgroundMusic {
   constructor(
     sources: { ogg?: string; mp3: string } | { ogg?: string; mp3: string }[],
   ) {
+    super();
+
     if (!Array.isArray(sources)) sources = [sources];
     for (const src of sources) {
       const url = AudioContextManager.canPlayOgg() && src.ogg
@@ -24,10 +26,16 @@ export default class BackgroundMusic {
     }
 
     if (Browser.isMobileDevice()) {
-      AppRoot.on("visibilitychange", this.handleVisibilityChange);
+      AppRoot.bind(this, "visibilitychange", () => {
+        if (this.currentSound) document.hidden ? this.pause() : this.play();
+      });
     }
 
-    VolumeManager.on("changeBackgroundMusicVolume", this.changeVolumeHandler);
+    VolumeManager.on("changeBackgroundMusicVolume", (volume) => {
+      for (const sound of this.sounds) {
+        sound.volume = volume;
+      }
+    });
   }
 
   private getRandomTrack(): Sound {
@@ -48,16 +56,6 @@ export default class BackgroundMusic {
     this.currentSound?.stop();
     this.currentSound = this.getRandomTrack();
     this.currentSound.play();
-  };
-
-  private handleVisibilityChange = (): void => {
-    if (this.currentSound) document.hidden ? this.pause() : this.play();
-  };
-
-  private changeVolumeHandler = (volume: number): void => {
-    for (const sound of this.sounds) {
-      sound.volume = volume;
-    }
   };
 
   public play(): this {
@@ -82,14 +80,6 @@ export default class BackgroundMusic {
     for (const sound of this.sounds) {
       sound.remove();
     }
-
-    if (Browser.isMobileDevice()) {
-      document.removeEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange,
-      );
-    }
-
-    VolumeManager.off("changeBackgroundMusicVolume", this.changeVolumeHandler);
+    super.remove();
   }
 }

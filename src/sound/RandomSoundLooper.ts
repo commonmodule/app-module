@@ -1,13 +1,15 @@
-import { IntegerUtils } from "@commonmodule/ts";
-import Sound from "./Sound.js";
-import Browser from "../utils/Browser.js";
+import { EventContainer, IntegerUtils } from "@commonmodule/ts";
 import AppRoot from "../dom/AppRoot.js";
+import Browser from "../utils/Browser.js";
+import Sound from "./Sound.js";
 
-export default class RandomSoundLooper {
+export default class RandomSoundLooper extends EventContainer {
   private readonly sounds: Sound[] = [];
   private currentSound?: Sound;
 
   constructor(sources: string[], private _volume = 0.8) {
+    super();
+
     for (const src of sources) {
       const sound = new Sound(src, _volume);
       sound.on("ended", this.handleSoundEnded);
@@ -15,7 +17,9 @@ export default class RandomSoundLooper {
     }
 
     if (Browser.isMobileDevice()) {
-      AppRoot.on("visibilitychange", this.handleVisibilityChange);
+      AppRoot.bind(this, "visibilitychange", () => {
+        document.hidden ? this.pause() : this.play();
+      });
     }
   }
 
@@ -28,10 +32,6 @@ export default class RandomSoundLooper {
     this.currentSound?.stop();
     this.currentSound = this.getRandomSound();
     this.currentSound.play();
-  };
-
-  private handleVisibilityChange = (): void => {
-    document.hidden ? this.pause() : this.play();
   };
 
   public play(): this {
@@ -68,12 +68,6 @@ export default class RandomSoundLooper {
     for (const sound of this.sounds) {
       sound.remove();
     }
-
-    if (Browser.isMobileDevice()) {
-      document.removeEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange,
-      );
-    }
+    super.remove();
   }
 }

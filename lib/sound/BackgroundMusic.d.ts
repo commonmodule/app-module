@@ -1,4 +1,5 @@
-export default class BackgroundMusic {
+import { EventContainer } from "@commonmodule/ts";
+export default class BackgroundMusic extends EventContainer {
     private readonly sounds;
     private currentSound?;
     private currentIndex;
@@ -11,8 +12,6 @@ export default class BackgroundMusic {
     }[]);
     private getRandomTrack;
     private handleSoundEnded;
-    private handleVisibilityChange;
-    private changeVolumeHandler;
     play(): this;
     pause(): this;
     stop(): this;

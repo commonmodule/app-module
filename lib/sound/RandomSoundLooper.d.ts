@@ -1,11 +1,11 @@
-export default class RandomSoundLooper {
+import { EventContainer } from "@commonmodule/ts";
+export default class RandomSoundLooper extends EventContainer {
     private _volume;
     private readonly sounds;
     private currentSound?;
     constructor(sources: string[], _volume?: number);
     private getRandomSound;
     private handleSoundEnded;
-    private handleVisibilityChange;
     play(): this;
     pause(): this;
     stop(): this;
