@@ -4,8 +4,16 @@ import Dom, {
   DomDefaultHandlers,
   ElementEventMap,
 } from "./Dom.js";
+import HTMLElementEventManager from "./HTMLElementEventManager.js";
 
 class AppRoot extends Dom<HTMLBodyElement> {
+  private windowEventManager = new HTMLElementEventManager<WindowEventMap>(
+    window,
+  );
+  private documentEventListeners = new HTMLElementEventManager<
+    DocumentEventMap
+  >(document);
+
   constructor() {
     super(document.body as HTMLBodyElement);
   }
@@ -32,19 +40,68 @@ class AppRoot extends Dom<HTMLBodyElement> {
 
   public override on<K extends keyof AllDomHandlers<HTMLBodyElement, {}>>(
     eventName: K,
-    handler: AllDomHandlers<HTMLBodyElement, {}>[K],
+    eventHandler: AllDomHandlers<HTMLBodyElement, {}>[K],
   ): this {
     if (("on" + eventName) in window) {
-      window.addEventListener(eventName, handler as EventListener);
+      this.windowEventManager.addEvent(
+        eventName as keyof WindowEventMap,
+        eventHandler as any,
+      );
       return this;
     }
 
     if (("on" + eventName) in document) {
-      document.addEventListener(eventName, handler as EventListener);
+      this.documentEventListeners.addEvent(
+        eventName as keyof DocumentEventMap,
+        eventHandler as any,
+      ) as any;
       return this;
     }
 
-    return super.on(eventName as any, handler);
+    return super.on(eventName as any, eventHandler);
+  }
+
+  public override once<K extends keyof {}>(
+    eventName: K,
+    eventHandler: {}[K],
+  ): this;
+
+  public override once<K extends keyof DefaultHandlers>(
+    eventName: K,
+    eventHandler: DefaultHandlers[K],
+  ): this;
+
+  public override once<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    eventHandler: DomDefaultHandlers[K],
+  ): this;
+
+  public override once<K extends keyof ElementEventMap<HTMLBodyElement>>(
+    eventName: K,
+    eventHandler: (event: ElementEventMap<HTMLBodyElement>[K]) => void,
+  ): this;
+
+  public override once<K extends keyof AllDomHandlers<HTMLBodyElement, {}>>(
+    eventName: K,
+    eventHandler: AllDomHandlers<HTMLBodyElement, {}>[K],
+  ): this {
+    if (("on" + eventName) in window) {
+      this.windowEventManager.addOnceEvent(
+        eventName as keyof WindowEventMap,
+        eventHandler as any,
+      ) as any;
+      return this;
+    }
+
+    if (("on" + eventName) in document) {
+      this.documentEventListeners.addOnceEvent(
+        eventName as keyof DocumentEventMap,
+        eventHandler as any,
+      ) as any;
+      return this;
+    }
+
+    return super.once(eventName as any, eventHandler);
   }
 
   public override off<K extends keyof {}>(
@@ -72,12 +129,18 @@ class AppRoot extends Dom<HTMLBodyElement> {
     eventHandler?: AllDomHandlers<HTMLBodyElement, {}>[K],
   ): this {
     if (("on" + eventName) in window) {
-      window.removeEventListener(eventName, eventHandler as EventListener);
+      this.windowEventManager.removeEvent(
+        eventName as keyof WindowEventMap,
+        eventHandler as any,
+      );
       return this;
     }
 
     if (("on" + eventName) in document) {
-      document.removeEventListener(eventName, eventHandler as EventListener);
+      this.documentEventListeners.removeEvent(
+        eventName as keyof DocumentEventMap,
+        eventHandler as any,
+      );
       return this;
     }
 
@@ -155,6 +218,14 @@ class AppRoot extends Dom<HTMLBodyElement> {
     eventHandler: AllDomHandlers<HTMLBodyElement, {}>[K],
   ): this {
     return super.bind(target, eventName as any, eventHandler);
+  }
+
+  public remove(): void {
+    this.windowEventManager.remove();
+    this.documentEventListeners.remove();
+    delete (this as any).windowEventManager;
+    delete (this as any).documentEventListeners;
+    super.remove();
   }
 }
 

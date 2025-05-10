@@ -11,6 +11,7 @@ export type AllDomHandlers<H extends HTMLElement, E> = E & DefaultHandlers & Dom
 export type DomChild<EOS extends ElementOrSelector = ElementOrSelector> = Dom | ElementProperties<InferElementType<EOS>> | string | undefined;
 export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHandlers = {}> extends EventNode<Dom, AllDomHandlers<H, E>> {
     htmlElement: H;
+    private htmlElementEventManager;
     constructor(elementOrSelector?: H | DomSelector, ...children: DomChild<H>[]);
     private prependText;
     private appendText;
@@ -26,6 +27,10 @@ export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHan
     on<K extends keyof DefaultHandlers>(eventName: K, eventHandler: DefaultHandlers[K]): this;
     on<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler: DomDefaultHandlers[K]): this;
     on<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void): this;
+    once<K extends keyof E>(eventName: K, eventHandler: E[K]): this;
+    once<K extends keyof DefaultHandlers>(eventName: K, eventHandler: DefaultHandlers[K]): this;
+    once<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler: DomDefaultHandlers[K]): this;
+    once<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void): this;
     off<K extends keyof E>(eventName: K, eventHandler?: E[K]): this;
     off<K extends keyof DefaultHandlers>(eventName: K, eventHandler?: DefaultHandlers[K]): this;
     off<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler?: DomDefaultHandlers[K]): this;

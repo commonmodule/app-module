@@ -11,6 +11,7 @@ import {
   InferElementType,
 } from "@commonmodule/universal-page";
 import createElementBySelector from "./createElementBySelector.js";
+import HTMLElementEventManager from "./HTMLElementEventManager.js";
 
 export type ElementEventMap<H extends HTMLElement> = H extends HTMLBodyElement
   ? WindowEventMap & DocumentEventMap & HTMLBodyElementEventMap
@@ -43,6 +44,10 @@ export default class Dom<
 > extends EventNode<Dom, AllDomHandlers<H, E>> {
   public htmlElement: H;
 
+  private htmlElementEventManager: HTMLElementEventManager<
+    ElementEventHandlers<H>
+  >;
+
   constructor(
     elementOrSelector?: H | DomSelector,
     ...children: DomChild<H>[]
@@ -52,6 +57,10 @@ export default class Dom<
     this.htmlElement = elementOrSelector instanceof Element
       ? elementOrSelector
       : createElementBySelector(elementOrSelector ?? "") as H;
+
+    this.htmlElementEventManager = new HTMLElementEventManager<
+      ElementEventHandlers<H>
+    >(this.htmlElement);
 
     this.append(...children);
   }
@@ -175,7 +184,7 @@ export default class Dom<
     eventHandler: AllDomHandlers<H, E>[K],
   ): this {
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
-      this.htmlElement.addEventListener(
+      this.htmlElementEventManager.addEvent(
         eventName as keyof HTMLElementEventMap,
         eventHandler,
       );
@@ -183,6 +192,41 @@ export default class Dom<
     }
 
     return super.on(eventName, eventHandler);
+  }
+
+  public override once<K extends keyof E>(
+    eventName: K,
+    eventHandler: E[K],
+  ): this;
+
+  public override once<K extends keyof DefaultHandlers>(
+    eventName: K,
+    eventHandler: DefaultHandlers[K],
+  ): this;
+
+  public override once<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    eventHandler: DomDefaultHandlers[K],
+  ): this;
+
+  public override once<K extends keyof ElementEventMap<H>>(
+    eventName: K,
+    eventHandler: (event: ElementEventMap<H>[K]) => void,
+  ): this;
+
+  public override once<K extends keyof AllDomHandlers<H, E>>(
+    eventName: K,
+    eventHandler: AllDomHandlers<H, E>[K],
+  ): this {
+    if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
+      this.htmlElementEventManager.addOnceEvent(
+        eventName as keyof HTMLElementEventMap,
+        eventHandler,
+      );
+      return this;
+    }
+
+    return super.once(eventName, eventHandler);
   }
 
   public override off<K extends keyof E>(
@@ -210,9 +254,9 @@ export default class Dom<
     eventHandler?: AllDomHandlers<H, E>[K],
   ): this {
     if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
-      this.htmlElement.removeEventListener(
+      this.htmlElementEventManager.removeEvent(
         eventName as keyof HTMLElementEventMap,
-        eventHandler as EventListener,
+        eventHandler,
       );
       return this;
     }
@@ -318,6 +362,8 @@ export default class Dom<
   public remove() {
     if (this.isRemoved()) throw new Error("Dom already removed");
     this.htmlElement.remove();
+    this.htmlElementEventManager.remove();
+    delete (this as any).htmlElementEventManager;
     super.remove();
   }
 }

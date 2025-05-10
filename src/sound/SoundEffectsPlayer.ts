@@ -6,7 +6,7 @@ class SoundEffectsPlayer {
   private playingSounds: Sound[] = [];
 
   constructor() {
-    VolumeManager.on("changeSoundEffectsVolume", (volume) => {
+    VolumeManager.on("changeSoundEffectVolume", (volume) => {
       for (const sound of this.playingSounds) {
         sound.volume = volume;
       }
@@ -16,7 +16,7 @@ class SoundEffectsPlayer {
   public play(urls: string | string[]): void {
     if (!Array.isArray(urls)) urls = [urls];
     const url = urls[IntegerUtils.random(0, urls.length - 1)];
-    const sound: Sound = new Sound(url, VolumeManager.soundEffectsVolume)
+    const sound: Sound = new Sound(url, VolumeManager.soundEffectVolume)
       .play()
       .on("ended", () => {
         sound.remove();
