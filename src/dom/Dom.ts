@@ -242,6 +242,48 @@ export default class Dom<
     return super.emit(eventName, ...args);
   }
 
+  public bind<K extends keyof E>(
+    eventName: K,
+    eventHandler: E[K],
+    target: Dom,
+  ): this;
+
+  public bind<K extends keyof DefaultHandlers>(
+    eventName: K,
+    eventHandler: DefaultHandlers[K],
+    target: Dom,
+  ): this;
+
+  public bind<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+    eventHandler: DomDefaultHandlers[K],
+    target: Dom,
+  ): this;
+
+  public bind<K extends keyof ElementEventMap<H>>(
+    eventName: K,
+    eventHandler: (event: ElementEventMap<H>[K]) => void,
+    target: Dom,
+  ): this;
+
+  public bind<K extends keyof AllDomHandlers<H, E>>(
+    eventName: K,
+    eventHandler: AllDomHandlers<H, E>[K],
+    target: Dom,
+  ): this {
+    if (
+      ("on" + (eventName as keyof HTMLElementEventMap)) in target.htmlElement
+    ) {
+      target.htmlElement.addEventListener(
+        eventName as keyof HTMLElementEventMap,
+        eventHandler,
+      );
+      return this;
+    }
+
+    return super.bind(eventName, eventHandler, target);
+  }
+
   public addClass(...classNames: string[]): this {
     this.htmlElement.classList.add(...classNames);
     return this;

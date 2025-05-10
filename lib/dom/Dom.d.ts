@@ -33,6 +33,10 @@ export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHan
     protected emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): Promise<ReturnType<E[K]>[]>;
     protected emit<K extends keyof DefaultHandlers>(eventName: K, ...args: Parameters<DefaultHandlers[K]>): Promise<ReturnType<DefaultHandlers[K]>[]>;
     protected emit<K extends keyof DomDefaultHandlers>(eventName: K, ...args: Parameters<DomDefaultHandlers[K]>): Promise<ReturnType<DomDefaultHandlers[K]>[]>;
+    bind<K extends keyof E>(eventName: K, eventHandler: E[K], target: Dom): this;
+    bind<K extends keyof DefaultHandlers>(eventName: K, eventHandler: DefaultHandlers[K], target: Dom): this;
+    bind<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler: DomDefaultHandlers[K], target: Dom): this;
+    bind<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void, target: Dom): this;
     addClass(...classNames: string[]): this;
     hasClass(className: string): boolean;
     removeClass(...classNames: string[]): this;
