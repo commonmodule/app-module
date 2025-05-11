@@ -2,7 +2,7 @@ import { ArrayUtils, IntegerUtils } from "@commonmodule/ts";
 import Sound from "./Sound.js";
 import VolumeManager from "./VolumeManager.js";
 
-class SoundEffectsPlayer {
+class SoundEffectPlayer {
   private playingSounds: Sound[] = [];
 
   constructor() {
@@ -26,4 +26,4 @@ class SoundEffectsPlayer {
   }
 }
 
-export default new SoundEffectsPlayer();
+export default new SoundEffectPlayer();

@@ -11,7 +11,7 @@ export { default as AudioContextManager } from "./sound/AudioContextManager.js";
 export { default as BackgroundMusic } from "./sound/BackgroundMusic.js";
 export { default as RandomSoundLooper } from "./sound/RandomSoundLooper.js";
 export { default as Sound } from "./sound/Sound.js";
-export { default as SoundEffectsPlayer } from "./sound/SoundEffectsPlayer.js";
+export { default as SoundEffectPlayer } from "./sound/SoundEffectPlayer.js";
 export { default as VolumeManager } from "./sound/VolumeManager.js";
 export { default as SPAInitializer } from "./SPAInitializer.js";
 export { default as AuthTokenManager } from "./store/AuthTokenManager.js";
