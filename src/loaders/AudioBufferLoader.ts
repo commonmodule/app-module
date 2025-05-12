@@ -1,4 +1,4 @@
-import { ResourceLoader } from "@common-module/ts";
+import { ResourceLoader } from "@commonmodule/ts";
 import AudioContextManager from "../sound/AudioContextManager.js";
 
 class AudioBufferLoader extends ResourceLoader<AudioBuffer> {
