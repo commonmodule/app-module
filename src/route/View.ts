@@ -1,15 +1,15 @@
 import { EventContainer, EventHandlers } from "@commonmodule/ts";
 import Dom from "../dom/Dom.js";
 
-export default abstract class View<DT = {}, CT extends Dom = Dom> {
+export default abstract class View<Data = {}, Container extends Dom = Dom> {
   private eventListeners: Map<
     EventContainer<EventHandlers>,
     Map<string, (...args: any[]) => any>
   > = new Map();
 
-  protected container!: CT;
+  protected container!: Container;
 
-  public changeData(data: DT): void {}
+  public changeData(data: Data): void {}
 
   protected addViewManagedEvent<
     T extends EventContainer<E>,
