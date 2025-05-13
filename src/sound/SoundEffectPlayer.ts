@@ -6,7 +6,7 @@ class SoundEffectPlayer {
   private playingSounds: Sound[] = [];
 
   constructor() {
-    VolumeManager.on("changeSoundEffectVolume", (volume) => {
+    VolumeManager.on("soundEffectVolumeChanged", (volume) => {
       for (const sound of this.playingSounds) {
         sound.volume = volume;
       }

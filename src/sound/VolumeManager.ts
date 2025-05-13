@@ -2,8 +2,8 @@ import { EventContainer } from "@commonmodule/ts";
 import Store from "../store/Store.js";
 
 class VolumeManager extends EventContainer<{
-  changeBackgroundMusicVolume: (volume: number) => void;
-  changeSoundEffectVolume: (volume: number) => void;
+  backgroundMusicVolumeChanged: (volume: number) => void;
+  soundEffectVolumeChanged: (volume: number) => void;
 }> {
   private store = new Store("volume-manager");
 
@@ -13,7 +13,7 @@ class VolumeManager extends EventContainer<{
 
   public set backgroundMusicVolume(volume: number) {
     this.store.setPermanent("backgroundMusicVolume", volume);
-    this.emit("changeBackgroundMusicVolume", volume);
+    this.emit("backgroundMusicVolumeChanged", volume);
   }
 
   public get soundEffectVolume(): number {
@@ -22,7 +22,7 @@ class VolumeManager extends EventContainer<{
 
   public set soundEffectVolume(volume: number) {
     this.store.setPermanent("soundEffectVolume", volume);
-    this.emit("changeSoundEffectVolume", volume);
+    this.emit("soundEffectVolumeChanged", volume);
   }
 }
 

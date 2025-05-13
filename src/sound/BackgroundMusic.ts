@@ -31,7 +31,7 @@ export default class BackgroundMusic extends EventContainer {
       });
     }
 
-    VolumeManager.on("changeBackgroundMusicVolume", (volume) => {
+    VolumeManager.on("backgroundMusicVolumeChanged", (volume) => {
       for (const sound of this.sounds) {
         sound.volume = volume;
       }

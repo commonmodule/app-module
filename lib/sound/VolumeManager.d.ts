@@ -1,7 +1,7 @@
 import { EventContainer } from "@commonmodule/ts";
 declare class VolumeManager extends EventContainer<{
-    changeBackgroundMusicVolume: (volume: number) => void;
-    changeSoundEffectVolume: (volume: number) => void;
+    backgroundMusicVolumeChanged: (volume: number) => void;
+    soundEffectVolumeChanged: (volume: number) => void;
 }> {
     private store;
     get backgroundMusicVolume(): number;
