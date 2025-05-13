@@ -31,6 +31,10 @@ export default class Dom<H extends HTMLElement = HTMLElement, E extends EventHan
     once<K extends keyof DefaultHandlers>(eventName: K, eventHandler: DefaultHandlers[K]): this;
     once<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler: DomDefaultHandlers[K]): this;
     once<K extends keyof ElementEventMap<H>>(eventName: K, eventHandler: (event: ElementEventMap<H>[K]) => void): this;
+    hasEvent<K extends keyof E>(eventName: K): boolean;
+    hasEvent<K extends keyof DefaultHandlers>(eventName: K): boolean;
+    hasEvent<K extends keyof DomDefaultHandlers>(eventName: K): boolean;
+    hasEvent<K extends keyof ElementEventMap<H>>(eventName: K): boolean;
     off<K extends keyof E>(eventName: K, eventHandler?: E[K]): this;
     off<K extends keyof DefaultHandlers>(eventName: K, eventHandler?: DefaultHandlers[K]): this;
     off<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler?: DomDefaultHandlers[K]): this;

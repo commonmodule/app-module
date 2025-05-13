@@ -16,6 +16,10 @@ declare class AppRoot extends Dom<HTMLBodyElement> {
     off<K extends keyof DefaultHandlers>(eventName: K, eventHandler?: DefaultHandlers[K]): this;
     off<K extends keyof DomDefaultHandlers>(eventName: K, eventHandler?: DomDefaultHandlers[K]): this;
     off<K extends keyof ElementEventMap<HTMLBodyElement>>(eventName: K, eventHandler?: (event: ElementEventMap<HTMLBodyElement>[K]) => void): this;
+    hasEvent<K extends keyof {}>(eventName: K): boolean;
+    hasEvent<K extends keyof DefaultHandlers>(eventName: K): boolean;
+    hasEvent<K extends keyof DomDefaultHandlers>(eventName: K): boolean;
+    hasEvent<K extends keyof ElementEventMap<HTMLBodyElement>>(eventName: K): boolean;
     emit<K extends keyof {}>(eventName: K, ...args: Parameters<{}[K]>): Promise<ReturnType<{}[K]>[]>;
     emit<K extends keyof DefaultHandlers>(eventName: K, ...args: Parameters<DefaultHandlers[K]>): Promise<ReturnType<DefaultHandlers[K]>[]>;
     emit<K extends keyof DomDefaultHandlers>(eventName: K, ...args: Parameters<DomDefaultHandlers[K]>): Promise<ReturnType<DomDefaultHandlers[K]>[]>;

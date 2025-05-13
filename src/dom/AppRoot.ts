@@ -147,6 +147,36 @@ class AppRoot extends Dom<HTMLBodyElement> {
     return super.off(eventName as any, eventHandler);
   }
 
+  public override hasEvent<K extends keyof {}>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof DefaultHandlers>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof ElementEventMap<HTMLBodyElement>>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof AllDomHandlers<HTMLBodyElement, {}>>(
+    eventName: K,
+  ): boolean {
+    if (("on" + eventName) in window) {
+      return this.windowEventManager.hasEvent(eventName as any);
+    }
+
+    if (("on" + eventName) in document) {
+      return this.documentEventListeners.hasEvent(eventName as any);
+    }
+
+    return super.hasEvent(eventName as any);
+  }
+
   public override emit<K extends keyof {}>(
     eventName: K,
     ...args: Parameters<{}[K]>

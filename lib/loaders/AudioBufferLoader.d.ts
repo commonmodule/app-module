@@ -1,4 +1,4 @@
-import { ResourceLoader } from "@common-module/ts";
+import { ResourceLoader } from "@commonmodule/ts";
 declare class AudioBufferLoader extends ResourceLoader<AudioBuffer> {
     protected loadResource(src: string): Promise<AudioBuffer | undefined>;
 }

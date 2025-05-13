@@ -52,6 +52,12 @@ export default class HTMLElementEventManager<E> {
     );
   }
 
+  public hasEvent<K extends keyof E>(eventName: K): boolean {
+    const events = this.events[eventName];
+    if (!events) return false;
+    return events.length > 0;
+  }
+
   public removeEvent<K extends keyof E>(
     eventName: K,
     eventHandler?: E[K],

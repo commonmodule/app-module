@@ -229,6 +229,32 @@ export default class Dom<
     return super.once(eventName, eventHandler);
   }
 
+  public override hasEvent<K extends keyof E>(eventName: K): boolean;
+
+  public override hasEvent<K extends keyof DefaultHandlers>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof DomDefaultHandlers>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof ElementEventMap<H>>(
+    eventName: K,
+  ): boolean;
+
+  public override hasEvent<K extends keyof AllDomHandlers<H, E>>(
+    eventName: K,
+  ): boolean {
+    if (("on" + (eventName as keyof HTMLElementEventMap)) in this.htmlElement) {
+      return this.htmlElementEventManager.hasEvent(
+        eventName as keyof HTMLElementEventMap,
+      );
+    }
+
+    return super.hasEvent(eventName);
+  }
+
   public override off<K extends keyof E>(
     eventName: K,
     eventHandler?: E[K],
