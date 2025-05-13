@@ -42,6 +42,8 @@ export default abstract class View<Data = {}, Container extends Dom = Dom> {
 
   public close(): void {
     this.removeAllEvents();
-    this.container?.remove();
+    if (this.container && this.container.isRemoved() !== true) {
+      this.container.remove();
+    }
   }
 }
